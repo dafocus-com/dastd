@@ -20,7 +20,7 @@ class ostream_string: public ostream_basic {
 		ostream_string(const char* str): m_str(str) {}
 
 		/// @brief Constructor with std::string
-		ostream_string(const std::string& str): m_str(str) {}
+		ostream_string(const std::string_view& str): m_str(str) {}
 
 		/// @brief Copy constructor
 		ostream_string(const ostream_string& o): std::basic_ios<char>(), ostream_basic(), m_str(o.m_str) {}

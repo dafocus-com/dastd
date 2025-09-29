@@ -33,7 +33,14 @@ class source_membuf: public source_with_peek<CHARTYPE> {
 		/// @param str String to be associated to this source<char>
 		/// @param offset Start reading the string at the given offset
 		/// @param length Do not read more than `length` characters from the string
-		source_membuf(const std::basic_string<CHARTYPE>& str, size_t offset=0, size_t length=SIZE_MAX);
+		source_membuf(const std::basic_string_view<CHARTYPE>& str, size_t offset=0, size_t length=SIZE_MAX);
+
+		/// @brief Constructor
+		/// @param str String to be associated to this source<char>
+		/// @param offset Start reading the string at the given offset
+		/// @param length Do not read more than `length` characters from the string
+		source_membuf(const std::basic_string<CHARTYPE>& str, size_t offset=0, size_t length=SIZE_MAX):
+            source_membuf(static_cast<const std::basic_string_view<CHARTYPE>&>(str), offset, length) {}
 
 		/// @brief Non-blocking method to read data from the source
 		///
@@ -79,7 +86,7 @@ class source_membuf: public source_with_peek<CHARTYPE> {
 // (param) String
 //------------------------------------------------------------------------------
 template<class CHARTYPE>
-source_membuf<CHARTYPE>::source_membuf(const std::basic_string<CHARTYPE>& str, size_t offset, size_t length)
+source_membuf<CHARTYPE>::source_membuf(const std::basic_string_view<CHARTYPE>& str, size_t offset, size_t length)
 {
 	if (offset > str.size()) {m_buf=nullptr; m_remaining=0;}
 	else {

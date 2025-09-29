@@ -37,7 +37,7 @@ class ostreambuf_basic: public std::streambuf {
 /// and redefine the `write_char` method.
 class ostream_basic: public std::ostream {
 	public:
-		/// @bried Constructor
+		/// @brief Constructor
 		ostream_basic(): std::ostream(&m_buf), m_buf(*this) {}
 
 		/// @brief Write one character to the target stream

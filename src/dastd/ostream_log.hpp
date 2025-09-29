@@ -228,12 +228,30 @@ class ostream_log: public ostream_broadcast {
 		#endif
 };
 
+
+/// @brief Operates as a guard object for writing on a @ref ostream_log object
+///
+/// The log is locked for the time the `ostream_log_guard` stays alive.
+///
+/// Example:
+///
+///     {
+///        ostream_log_guard guard(g_log, ostream_log_level_t::log_INFO);
+///        g_log << "Write on locked log..."
+///     }
+///     // guard is out of scope and the log lock has been released.
 class ostream_log_guard {
 	private:
+		/// @brief Internal reference to the log object
 		ostream_log& m_log;
 
 	public:
+		/// @brief Constructor
+		/// @param log The log object to be used
+		/// @param log_level The log level of this entry
 		ostream_log_guard(ostream_log& log, ostream_log_level_t log_level): m_log(log) {log.begin(log_level);}
+		
+		/// @brief Destructor
 		~ostream_log_guard() {m_log.end();}
 
 		ostream_log_guard(const ostream_log_guard&) = delete;
@@ -247,8 +265,16 @@ class ostream_log_guard {
 // (brief) Global instance of log
 //------------------------------------------------------------------------------
 #ifndef DASTD_CUSTOM_GLOBAL_LOG
+
+// Define DASTD_LOG_IS_DYNAMIC to use the dynamic pointer. It is up to the
+// user to initialize `g_log_ptr` with a valid value before using the log.
+#ifdef DASTD_LOG_IS_DYNAMIC
+inline std::shared_ptr<ostream_log> g_log_ptr;
+inline ostream_log& global_log() {return *g_log_ptr;}
+#else
 inline ostream_log g_log2;
 inline constexpr ostream_log& global_log() {return g_log2;}
+#endif
 #else
 DASTD_CUSTOM_GLOBAL_LOG
 #endif
@@ -264,6 +290,19 @@ DASTD_CUSTOM_GLOBAL_LOG
 #define DASTD_LOG_WARNING(txt) (::dastd::g_log.begin(::dastd::ostream_log_level_t::log_WARNING), (::dastd::g_log << txt), ::dastd::g_log.end(DASTD_TAG))
 #define DASTD_LOG_OK(txt) (::dastd::g_log.begin(::dastd::ostream_log_level_t::log_OK), (::dastd::g_log << txt), ::dastd::g_log.end(DASTD_TAG))
 #define DASTD_LOG_ERROR(txt) (::dastd::g_log.begin(::dastd::ostream_log_level_t::log_ERROR), (::dastd::g_log << txt), ::dastd::g_log.end(DASTD_TAG))
+
+/// To be used for longer operations on log:
+///
+/// Example:
+/// 
+///      DASTD_LOG_BEGIN(DEBUG);
+///      DASTD_LOG_STREAM << "Hello world" << std::endl;
+///      DASTD_LOG_STREAM << "Write some more...";
+///      DASTD_LOG_END;
+/// 
+#define DASTD_LOG_BEGIN(level) ::dastd::g_log.begin(::dastd::ostream_log_level_t::log_##level)
+#define DASTD_LOG_STREAM ::dastd::g_log
+#define DASTD_LOG_END ::dastd::g_log.end(DASTD_TAG)
 
 #endif // DASTD_DISABLE_DEFAULT_LOG
 

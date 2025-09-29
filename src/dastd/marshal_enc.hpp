@@ -117,12 +117,12 @@ namespace dastd {
 			/// @brief Start encoding a structure
 			/// @param extensible If true, the structure will be encoded so more or less fields can be expected.
 			///
-			/// See @link marshaling_structs documentation for details and examples.
+			/// See @link marshaling_structs documentation @endlink for details and examples.
 			virtual void encode_struct_begin(bool extensible) = 0;
 
 			/// @brief Terminate encoding a structure
 			///
-			/// See @link marshaling_structs documentation for details and examples.
+			/// See @link marshaling_structs documentation @endlink for details and examples.
 			virtual void encode_struct_end() = 0;
 
 			/// @brief Start encoding a field within a structure
@@ -130,68 +130,68 @@ namespace dastd {
 			/// @param opt   Indicates whether the field is mandatory or optional
 			///
 			/// This must be invoked inside a `encode_struct_begin` and `encode_struct_end` pair.
-			/// See @link marshaling_structs documentation for details and examples.
+			/// See @link marshaling_structs documentation @endlink for details and examples.
 			virtual void encode_struct_field_begin(marshal_label label, marshal_optional_field opt=marshal_optional_field::MANDATORY) = 0;
 
 			/// @brief Terminate encoding a field within a structure
 			///
 			/// This must be invoked inside a `encode_struct_begin` and `encode_struct_end` pair.
-			/// See @link marshaling_structs documentation for details and examples.
+			/// See @link marshaling_structs documentation @endlink for details and examples.
 			virtual void encode_struct_field_end() = 0;
 
 			/// @brief Start encoding an array
 			/// @param count Number of elements that will be encoded
 			///
-			/// See @link marshaling_arrays documentation for details and examples.
+			/// See @link marshaling_arrays documentation @endlink for details and examples.
 			virtual void encode_array_begin(size_t count) = 0;
 
 			/// @brief Terminate encoding an array
 			///
-			/// See @link marshaling_arrays documentation for details and examples.
+			/// See @link marshaling_arrays documentation @endlink for details and examples.
 			virtual void encode_array_end() = 0;
 
 			/// @brief Start encoding an array element
 			///
-			/// See @link marshaling_arrays documentation for details and examples.
+			/// See @link marshaling_arrays documentation @endlink for details and examples.
 			virtual void encode_array_element_begin() = 0;
 
 			/// @brief Terminate encoding an array element
 			///
-			/// See @link marshaling_arrays documentation for details and examples.
+			/// See @link marshaling_arrays documentation @endlink for details and examples.
 			virtual void encode_array_element_end() = 0;
 
 			/// @brief Start encoding a dictionary
 			/// @param count Number of elements that will be encoded
 			///
-			/// See @link marshaling_dictionaries documentation for details and examples.
+			/// See @link marshaling_dictionaries documentation @endlink for details and examples.
 			virtual void encode_dictionary_begin(size_t count) = 0;
 
 			/// @brief Terminate encoding a dictionary
 			///
-			/// See @link marshaling_dictionaries documentation for details and examples.
+			/// See @link marshaling_dictionaries documentation @endlink for details and examples.
 			virtual void encode_dictionary_end() = 0;
 
 			/// @brief Start encoding a dictionary element
 			/// @param key UTF-8 encoded string key that will be encoded along with the object
 			///
-			/// See @link marshaling_dictionaries documentation for details and examples.
+			/// See @link marshaling_dictionaries documentation @endlink for details and examples.
 			virtual void encode_dictionary_element_begin(const std::string& key) = 0;
 
 			/// @brief Terminate encoding a dictionary element
 			///
-			/// See @link marshaling_dictionaries documentation for details and examples.
+			/// See @link marshaling_dictionaries documentation @endlink for details and examples.
 			virtual void encode_dictionary_element_end() = 0;
 
 			/// @brief Start encoding a typed object
 			/// @param label Contains the name of the type and its label-id
 			/// @param extensible If true, the object is encoded in way that allows skipping it during decoding.
 			///
-			/// See @link marshaling_typeds documentation for details and examples.
+			/// See @link marshaling_typeds documentation @endlink for details and examples.
 			virtual void encode_typed_begin(marshal_label label, bool extensible) = 0;
 
 			/// @brief Terminate encoding a typed object
 			///
-			/// See @link marshaling_typeds documentation for details and examples.
+			/// See @link marshaling_typeds documentation @endlink for details and examples.
 			virtual void encode_typed_end() = 0;
 
 		protected:

@@ -73,7 +73,7 @@ class strtointegral_t: public strtointegral_constants {
 		/// @param base Numeric base from 2 to 36 or `detect_base` for automatic base detection with 0x, 0b and 0 (octal) prefixes.
 		/// @param min_value Minimum allowed value
 		/// @param max_value Maximum allowed value
-		void convert(const std::basic_string<CHARTYPE>& str, unsigned base=detect_base, NUMTYPE min_value=std::numeric_limits<NUMTYPE>::lowest(), NUMTYPE max_value=std::numeric_limits<NUMTYPE>::max());
+		void convert(const std::basic_string_view<CHARTYPE>& str, unsigned base=detect_base, NUMTYPE min_value=std::numeric_limits<NUMTYPE>::lowest(), NUMTYPE max_value=std::numeric_limits<NUMTYPE>::max());
 
 		/// @brief Return the data
 		///
@@ -371,7 +371,7 @@ void strtointegral_t<NUMTYPE,CHARTYPE>::convert(const CHARTYPE* str, size_t str_
 
 /// Execute the conversion from a vector
 template<class NUMTYPE, class CHARTYPE>
-void strtointegral_t<NUMTYPE,CHARTYPE>::convert(const std::basic_string<CHARTYPE>& str, unsigned base, NUMTYPE min_value, NUMTYPE max_value)
+void strtointegral_t<NUMTYPE,CHARTYPE>::convert(const std::basic_string_view<CHARTYPE>& str, unsigned base, NUMTYPE min_value, NUMTYPE max_value)
 {
 	clear();
 	conversion_state state;
@@ -412,7 +412,7 @@ std::pair<NUMTYPE,bool> strtointegral(const CHARTYPE* str, NUMTYPE data_on_fail=
 /// @return Return a pair containing as `first` the data and `second` set to `true`
 ///         in case the parsing is valid; returns `data_on_fail' and `false` otherwise.
 template<class NUMTYPE, class CHARTYPE>
-std::pair<NUMTYPE,bool> strtointegral(const std::basic_string<CHARTYPE>& str, NUMTYPE data_on_fail=0, unsigned base=strtointegral_constants::detect_base, NUMTYPE min_value=std::numeric_limits<NUMTYPE>::lowest(), NUMTYPE max_value=std::numeric_limits<NUMTYPE>::max())
+std::pair<NUMTYPE,bool> strtointegral(const std::basic_string_view<CHARTYPE>& str, NUMTYPE data_on_fail=0, unsigned base=strtointegral_constants::detect_base, NUMTYPE min_value=std::numeric_limits<NUMTYPE>::lowest(), NUMTYPE max_value=std::numeric_limits<NUMTYPE>::max())
 {
 	strtointegral_t<NUMTYPE,CHARTYPE> sit;
 	sit.convert(str, base, min_value, max_value);

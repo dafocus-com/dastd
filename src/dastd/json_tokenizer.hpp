@@ -244,10 +244,10 @@ class json_tokenizer_base {
 		/// @return Returns the result of this step
 		json_tokenizer_ret internal_process_eof();
 
-	    /// @brief Set the first character before starting.
-        ///
-        /// Used by derived classes that can not do it in the constructor
-        void set_first_char(CHARTYPE first_char) {m_prev_char = first_char;}
+		/// @brief Set the first character before starting.
+		///
+		/// Used by derived classes that can not do it in the constructor
+		void set_first_char(CHARTYPE first_char) {m_prev_char = first_char;}
 
 	public:
 		//--------------------------------------------------------
@@ -294,7 +294,7 @@ class json_tokenizer: public json_tokenizer_base<CHARTYPE,RAWSTRING> {
 		// UPDATE ACCESS SECTION
 		//--------------------------------------------------------
 		/// @brief Constructor
-        /// @param first_char  Anticipate the first character (see CHARACTER FETCHING in the header)
+		/// @param first_char  Anticipate the first character (see CHARACTER FETCHING in the header)
 		/// @param flags See the "FLAGS" section above
 		json_tokenizer(CHARTYPE first_char, uint32_t flags): json_tokenizer_base<CHARTYPE,RAWSTRING>(first_char, flags) {}
 
@@ -325,11 +325,11 @@ class json_tokenizer_sourced: public json_tokenizer_base<CHARTYPE,RAWSTRING> {
 		/// @brief Constructor
 		/// @param flags See the "FLAGS" section above
 		json_tokenizer_sourced(source_with_peek<CHARTYPE>& source, uint32_t flags=0): json_tokenizer_base<CHARTYPE,RAWSTRING>((CHARTYPE)0, flags), m_source(source) 
-        {
-            CHARTYPE ch;
-            if (source.tentative_peek_char(ch)) this->set_first_char(ch);
-            else this->internal_process_eof();
-        }
+		{
+			CHARTYPE ch;
+			if (source.tentative_peek_char(ch)) this->set_first_char(ch);
+			else this->internal_process_eof();
+		}
 
 		/// @brief Extract the next token
 		/// @return Returns the result of this step or `C_NOTHING_MORE` if there are no more tokens

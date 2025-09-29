@@ -39,7 +39,7 @@ class fmt_bin {
 		/// @brief Constructor
 		/// @param s String to be printed
 		/// @param m_flags See DASTD_FMTBINASCII_xxx
-		fmt_bin(const std::string& s, fmt_bin_format format=fmt_bin_format::HEX_DUMP): m_format(format) {m_ptr = s.c_str(); m_len=s.length();}
+		fmt_bin(const std::string_view& s, fmt_bin_format format=fmt_bin_format::HEX_DUMP): m_format(format) {m_ptr = s.data(); m_len=s.length();}
 
 		/// @brief Constructor
 		/// @param s Vector to be printed

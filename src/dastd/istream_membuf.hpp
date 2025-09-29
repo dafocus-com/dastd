@@ -20,6 +20,7 @@ class istream_membuf: public std::istream {
 
 		/// @brief Instance of membuf used by this istream
 		membuf m_membuf;
+
 	public:
 		/// @brief Constructor
 		/// @param buffer Pointer to the buffer
@@ -27,9 +28,8 @@ class istream_membuf: public std::istream {
 		istream_membuf(const void* buffer, size_t length): std::istream(&m_membuf), m_membuf(buffer, length) {}
 
 		/// @brief Constructor
-		/// @param buffer Pointer to the buffer
-		/// @param length Length of the buffer
-		istream_membuf(const std::string& str): std::istream(&m_membuf), m_membuf(str.c_str(), str.size()) {}
+		/// @param str String view used as a source of data
+		istream_membuf(const std::string_view& str): std::istream(&m_membuf), m_membuf(str.data(), str.size()) {}
 };
 
 } // namespace dastd

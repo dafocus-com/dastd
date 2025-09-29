@@ -139,12 +139,12 @@ namespace dastd {
 			/// @param field_infos Array with the label-ids of the expected fields in their correct order and a marker telling if that field is optional.
 			/// @param field_infos_count Number of elements to be expected in the field_ids array.
 			///
-			/// See @link marshaling_structs documentation for details and examples.
+			/// See @link marshaling_structs documentation @endlink for details and examples.
 			virtual void decode_struct_begin(bool extensible, const marshal_label_info_t* field_infos, size_t fields_infos_count) override;
 
 			/// @brief Terminate Decoding a structure
 			///
-			/// See @link marshaling_structs documentation for details and examples.
+			/// See @link marshaling_structs documentation @endlink for details and examples.
 			virtual void decode_struct_end() override;
 
 			/// @brief Start decoding a field within a structure
@@ -156,7 +156,7 @@ namespace dastd {
 			/// If the encoding type allows dupe or unknown fields, the `decode_struct_field_skip()`
 			/// method will be available for skipping the unwanted fields.
 			///
-			/// See @link marshaling_structs documentation for details and examples.
+			/// See @link marshaling_structs documentation @endlink for details and examples.
 			///
 			/// @param optional_present This flag is set to `true` if the field is present, or `false`
 			///                         if missing.
@@ -172,13 +172,13 @@ namespace dastd {
 			/// @brief Terminate decoding a field within a structure
 			///
 			/// This must be invoked inside a `decode_struct_begin` and `decode_struct_end` pair.
-			/// See @link marshaling_structs documentation for details and examples.
+			/// See @link marshaling_structs documentation @endlink for details and examples.
 			virtual void decode_struct_field_end() override;
 
 			/// @brief Start decoding an array
 			/// @param count Number of elements that will be decoded
 			///
-			/// See @link marshaling_arrays documentation for details and examples.
+			/// See @link marshaling_arrays documentation @endlink for details and examples.
 			///
 			/// @return Returns the expected number of elements or `marshal_array_SIZE_UNKNOWN`
 			///         if the size is unknown.
@@ -186,13 +186,13 @@ namespace dastd {
 
 			/// @brief Terminate decoding an array
 			///
-			/// See @link marshaling_arrays documentation for details and examples.
+			/// See @link marshaling_arrays documentation @endlink for details and examples.
 			virtual void decode_array_end() override;
 
 			/// @brief Start decoding an array element
 			/// @param count Number of elements that will be decoded
 			///
-			/// See @link marshaling_arrays documentation for details and examples.
+			/// See @link marshaling_arrays documentation @endlink for details and examples.
 			///
 			/// @return Returns `true` if the element is available or `false` if
 			///         no more elements are available.
@@ -200,13 +200,13 @@ namespace dastd {
 
 			/// @brief Terminate decoding an array element
 			///
-			/// See @link marshaling_arrays documentation for details and examples.
+			/// See @link marshaling_arrays documentation @endlink for details and examples.
 			virtual void decode_array_element_end() override;
 
 			/// @brief Start decoding a dictionary
 			/// @param count Number of elements that will be decoded
 			///
-			/// See @link marshaling_dictionaries documentation for details and examples.
+			/// See @link marshaling_dictionaries documentation @endlink for details and examples.
 			///
 			/// @return Returns the expected number of elements or `marshal_array_SIZE_UNKNOWN`
 			///         if the size is unknown.
@@ -214,13 +214,13 @@ namespace dastd {
 
 			/// @brief Terminate decoding a dictionary
 			///
-			/// See @link marshaling_dictionaries documentation for details and examples.
+			/// See @link marshaling_dictionaries documentation @endlink for details and examples.
 			virtual void decode_dictionary_end() override;
 
 			/// @brief Start decoding a dictionary element
 			/// @param key UTF-8 encoded string key that has been encoded along with the object
 			///
-			/// See @link marshaling_dictionaries documentation for details and examples.
+			/// See @link marshaling_dictionaries documentation @endlink for details and examples.
 			///
 			/// @return Returns `true` if the element is available or `false` if
 			///         no more elements are available.
@@ -228,13 +228,13 @@ namespace dastd {
 
 			/// @brief Terminate decoding a dictionary element
 			///
-			/// See @link marshaling_dictionaries documentation for details and examples.
+			/// See @link marshaling_dictionaries documentation @endlink for details and examples.
 			virtual void decode_dictionary_element_end() override;
 
 			/// @brief Start decoding a typed object
 			/// @param extensible If true, the object is decoded in way that allows skipping it during decoding.
 			///
-			/// See @link marshaling_typeds documentation for details and examples.
+			/// See @link marshaling_typeds documentation @endlink for details and examples.
 			///
 			/// @return Returns the label-id of the type of the object that is following
 			virtual marshal_label_id_t decode_typed_begin(bool extensible) override;
@@ -245,12 +245,12 @@ namespace dastd {
 			/// the `extensible` parameter is `true`. Useful when the encoding data comes from
 			/// a newer version that has new object types unknown to this version.
 			///
-			/// See @link marshaling_typeds documentation for details and examples.
+			/// See @link marshaling_typeds documentation @endlink for details and examples.
 			virtual void decode_typed_end_skip() override;
 
 			/// @brief Terminate decoding a typed object
 			///
-			/// See @link marshaling_typeds documentation for details and examples.
+			/// See @link marshaling_typeds documentation @endlink for details and examples.
 			virtual void decode_typed_end() override;
 
 		protected:

@@ -91,7 +91,7 @@ void trim_trailing_spaces(std::basic_string<CHARTYPE>& value)
 /// @param s1 First string
 /// @param s2 Second string
 /// @return Returns `<0` if `s1<s2`, 0 if `s1==s2` and `>0` if `s1>s2`
-inline int icompare(const std::string& s1, const std::string& s2)
+inline int icompare(const std::string_view& s1, const std::string_view& s2)
 {
 	size_t sz1 = s1.size();
 	size_t sz2 = s2.size();

@@ -46,6 +46,11 @@ class fmt_string {
 
 		/// @brief Constructor that writes a string
 		/// @param string    Input string
+		fmt_string(const std::basic_string_view<CHARTYPE>& string):
+			m_data_type(use_string), m_string(string) {}
+
+		/// @brief Constructor that writes a string
+		/// @param string    Input string
 		fmt_string(const std::basic_string<CHARTYPE>& string):
 			m_data_type(use_string), m_string(string) {}
 
@@ -154,7 +159,7 @@ void print_UTF8(std::ostream& o, CHARTYPE code_point)
 
 // Encode the char32string in UTF-8 on the given stream
 template<class CHARTYPE>
-void print_UTF8(std::ostream& o, const std::basic_string<CHARTYPE>& text)
+void print_UTF8(std::ostream& o, const std::basic_string_view<CHARTYPE>& text)
 {
 	for (auto code_point: text) print_UTF8(o, code_point);
 }
@@ -230,7 +235,7 @@ void print_C11_ESCAPED(std::ostream& o, CHARTYPE code_point1) {print_C11_ESCAPED
 ///                     by "C". In case of "\xAB" it will write '" "' so it becomes
 ///                     ...\xAB" "C...
 template<class CHARTYPE, fmt_string_format_t FORMAT=fmt_string_f::FMT_DEFAULT>
-void print_C11_ESCAPED(std::ostream& o, const std::basic_string<CHARTYPE>& text, bool auto_requote=false)
+void print_C11_ESCAPED(std::ostream& o, const std::basic_string_view<CHARTYPE>& text, bool auto_requote=false)
 {
 	if (auto_requote) {
 		bool first=true;
@@ -368,7 +373,7 @@ void print_8bit_format(std::ostream& o, const CHARTYPE* stringZ)
 
 // Encode the char32_t in the indicated fmt_string_settings settings
 template<class CHARTYPE, fmt_string_format_t FORMAT=fmt_string_f::FMT_DEFAULT>
-void print_8bit_format(std::ostream& o, const std::basic_string<CHARTYPE>& text)
+void print_8bit_format(std::ostream& o, const std::basic_string_view<CHARTYPE>& text)
 {
 	switch(fmt_string_f::main_mode(FORMAT)) {
 		case fmt_string_f::UTF8: for (auto code_point: text) print_UTF8(o, code_point); break;
@@ -407,5 +412,5 @@ void fmt_string<CHARTYPE,FORMAT>::print(std::ostream& o) const
 
 inline std::ostream& operator<<(std::ostream& o, const char32_t* data) {dastd::print_8bit_format(o, data, dastd::fmt_string_f::C11_ESCAPED); return o;}
 inline std::ostream& operator<<(std::ostream& o, char32_t data) {dastd::print_C11_ESCAPED<char32_t>(o, data); return o;}
-inline std::ostream& operator<<(std::ostream& o, const std::u32string& data) {dastd::print_C11_ESCAPED(o, data); return o;}
+inline std::ostream& operator<<(std::ostream& o, const std::u32string_view& data) {dastd::print_C11_ESCAPED(o, data); return o;}
 //inline std::ostream& operator<<(std::ostream& o, const dastd::flooder_ch32& data) {o << dastd::fmt_string(data); return o;}
