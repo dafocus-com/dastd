@@ -121,6 +121,17 @@ inline double marshal_dec_bin::decode_f64(uint32_t suggestions)
 	return unpack_f64(value);
 }
 
+/// @brief Decode a 128-bit UUID
+/// @return Return the decoded data
+/// @param suggestions Encoding suggestions; see @link marshaling_suggestions documentation @endlink.
+inline uuid marshal_dec_bin::decode_uuid(uint32_t suggestions)
+{
+	DASTD_NOWARN_UNUSED(suggestions);
+	uuid::array_t buffer;
+	decode_binary(buffer.data(), buffer.size(), suggestions);
+	return uuid(buffer);
+}
+
 
 // Decode a std::string (UTF-8)
 inline void marshal_dec_bin::decode_string_utf8(std::string& value, uint32_t suggestions)

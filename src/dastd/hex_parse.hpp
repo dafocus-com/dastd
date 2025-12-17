@@ -17,7 +17,7 @@ constexpr uint8_t INVALID_HEX_CHAR = 16;
 /// @brief Converts a character to an 0..15 value
 /// @return Returns the value of the char or `INVALID_HEX_CHAR` if invalid
 template<class CHARTYPE>
-uint8_t hex_char(CHARTYPE ch)
+inline constexpr uint8_t hex_char(CHARTYPE ch)
 {
 	if ((ch >= '0') && (ch <= '9')) return (uint8_t)((ch)-'0');
 	if ((ch >= 'A') && (ch <= 'F')) return (uint8_t)((ch)-'A')+10;
@@ -32,7 +32,7 @@ uint8_t hex_char(CHARTYPE ch)
 /// @return Returns the number of characters read from `src` before stopping because `src` terminated or
 ///         an invalid character has been found.
 template<class CHARTYPE>
-size_t hex_parse(source_with_peek<CHARTYPE>& src, std::vector<uint8_t>& bytes)
+inline size_t hex_parse(source_with_peek<CHARTYPE>& src, std::vector<uint8_t>& bytes)
 {
 	size_t count=0;
 	uint8_t byte = 0;
@@ -70,6 +70,24 @@ inline size_t hex_parse(const std::string& src, std::vector<uint8_t>& bytes)
 	dastd::string_or_vector<char> sov(src);
 	dastd::source_string_or_vector<char> inp(sov);
 	return hex_parse<char>(inp, bytes);
+}
+
+/// @brief Convert two hex characters into a byte
+/// @tparam CHARTYPE Type of the character
+/// @param ch1 First characrer
+/// @param ch2 Second character
+/// @param value Corresponding byte valye
+/// @return Returns `true` if valid, `false` if one or both the characters are not valid hex chars
+template<class CHARTYPE>
+inline constexpr bool hex_char_pair(CHARTYPE ch1, CHARTYPE ch2, uint8_t& value)
+{
+	value = hex_char<CHARTYPE>(ch1);
+	if (value == INVALID_HEX_CHAR) return false;
+	value <<= 4;
+	uint8_t b2 = hex_char<CHARTYPE>(ch2);
+	if (b2 == INVALID_HEX_CHAR) return false;
+	value |= b2;
+	return true;
 }
 
 

@@ -115,6 +115,11 @@ class marshal_enc_json: public marshal_enc {
 		/// @param suggestions Encoding suggestions; see @link marshaling_suggestions documentation @endlink.
 		virtual void encode_f64(double value, uint32_t suggestions=0) override;
 
+		/// @brief Encode a UUID
+		/// @param value Value to be encoded.
+		/// @param suggestions Encoding suggestions; see @link marshaling_suggestions documentation @endlink.
+		virtual void encode_uuid(const uuid& value, uint32_t suggestions=0) override;
+
 		/// @brief Encode a std::string (UTF-8)
 		/// @param value Value to be encoded.
 		/// @param suggestions Encoding suggestions; see @link marshaling_suggestions documentation @endlink.
@@ -302,6 +307,14 @@ inline void marshal_enc_json::encode_f64(double value, uint32_t suggestions)
 	DASTD_NOWARN_UNUSED(suggestions);
 	assert(!m_is_typed);
 	m_out << std::fixed << std::setprecision(std::numeric_limits<double>::max_digits10) << value;
+}
+
+// Encode a UUID
+inline void marshal_enc_json::encode_uuid(const uuid& value, uint32_t suggestions)
+{
+	DASTD_NOWARN_UNUSED(suggestions);
+	assert(!m_is_typed);
+	m_out << '"' << value << '"';
 }
 
 // Encode a std::string (UTF-8)

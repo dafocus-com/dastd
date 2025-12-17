@@ -6,4 +6,5 @@ This library contains include-only extensions to the C++20 standard library.
 
 * 1.0.00 - 17-SEP-2025 - First release
 * 1.0.01 - 17-SEP-2025 - Added one missing file
+* 1.0.02 - 30-SEP-2025 - Added several files that were not yet released in the previous releases. Changed several `const std::string&` in `const std::string_view&`
 

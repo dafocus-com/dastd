@@ -150,6 +150,15 @@ class ostream_log: public ostream_broadcast {
 		/// @param tag The `tag` is used only by the logging systems supporting a tag for each log entry
 		virtual void close_session(const char* tag);
 
+		/// @brief Terminate the log entry with a newline
+        ///
+        /// This method is invoked if the log entry is ended but it has not been terminated with a newline.
+        /// It is used to terminate the log line in the logging system that do not record single
+        /// separate log entries.
+        /// 
+        /// Override to change the behaviour if required.
+		virtual void terminate_log_entry_with_newline();
+
 		/// @brief Actually write one character on the log
 		/// @param c Character to be printed
 		/// 
@@ -271,6 +280,10 @@ class ostream_log_guard {
 #ifdef DASTD_LOG_IS_DYNAMIC
 inline std::shared_ptr<ostream_log> g_log_ptr;
 inline ostream_log& global_log() {return *g_log_ptr;}
+
+// Define DASTD_LOG_IS_EXTERNAL to use an external function `global_log()`
+#elif defined DASTD_LOG_IS_EXTERNAL
+extern ostream_log& global_log();
 #else
 inline ostream_log g_log2;
 inline constexpr ostream_log& global_log() {return g_log2;}
@@ -519,9 +532,7 @@ inline void ostream_log::close_session(const char* tag)
 {
 	DASTD_NOWARN_UNUSED(tag);
 	if (m_requires_new_line) {
-		#ifndef DASTD_ESP32
-		write_char('\n');
-		#endif
+		terminate_log_entry_with_newline();
 		m_requires_new_line = false;
 	}
 	m_next_char_is_first_in_its_line = true;
@@ -552,6 +563,16 @@ inline void ostream_log::close_session(const char* tag)
 		m_esp32_text.clear();
 	}
 	#endif
+}
+
+//------------------------------------------------------------------------------
+// (brief) Terminate the log entry with a newline
+//------------------------------------------------------------------------------
+inline void ostream_log::terminate_log_entry_with_newline()
+{
+    #ifndef DASTD_ESP32
+    write_char('\n');
+    #endif
 }
 
 //------------------------------------------------------------------------------

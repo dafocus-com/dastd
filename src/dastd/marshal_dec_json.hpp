@@ -149,6 +149,11 @@ class marshal_dec_json: public marshal_dec {
 		/// @param suggestions Encoding suggestions; see @link marshaling_suggestions documentation @endlink.
 		virtual double decode_f64(uint32_t suggestions=0) override;
 
+		/// @brief Decode a 128-bit UUID
+		/// @return Return the decoded data
+		/// @param suggestions Encoding suggestions; see @link marshaling_suggestions documentation @endlink.
+		virtual uuid decode_uuid(uint32_t suggestions=0) override;
+
 		/// @brief Decode a std::string (UTF-8)
 		/// @param value Receives the decoded data
 		/// @param suggestions Encoding suggestions; see @link marshaling_suggestions documentation @endlink.
@@ -300,7 +305,7 @@ class marshal_dec_json: public marshal_dec {
 
 // Attempt to translate a label_id into a text
 template<class CHARTYPE, class DECOPRINTER>
-bool marshal_dec_json<CHARTYPE, DECOPRINTER>::get_field_name(marshal_label_id_t label_id, char32string& label_text) const
+inline bool marshal_dec_json<CHARTYPE, DECOPRINTER>::get_field_name(marshal_label_id_t label_id, char32string& label_text) const
 {
 	auto iter = m_fields_map.find(label_id);
 	if (iter != m_fields_map.end()) {
@@ -320,7 +325,7 @@ inline void marshal_dec_json<CHARTYPE, DECOPRINTER>::fetch_token()
 
 // Decode a bool
 template<class CHARTYPE, class DECOPRINTER>
-bool marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_bool(uint32_t suggestions)
+inline bool marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_bool(uint32_t suggestions)
 {
 	DASTD_NOWARN_UNUSED(suggestions);
 	assert(!m_is_typed);
@@ -334,7 +339,7 @@ bool marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_bool(uint32_t suggestions)
 
 // Decode a int8_t
 template<class CHARTYPE, class DECOPRINTER>
-int8_t marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_i8(uint32_t suggestions)
+inline int8_t marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_i8(uint32_t suggestions)
 {
 	DASTD_NOWARN_UNUSED(suggestions);
 	assert(!m_is_typed);
@@ -346,7 +351,7 @@ int8_t marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_i8(uint32_t suggestions)
 
 // Decode a uint8_t
 template<class CHARTYPE, class DECOPRINTER>
-uint8_t marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_u8(uint32_t suggestions)
+inline uint8_t marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_u8(uint32_t suggestions)
 {
 	DASTD_NOWARN_UNUSED(suggestions);
 	assert(!m_is_typed);
@@ -358,7 +363,7 @@ uint8_t marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_u8(uint32_t suggestions)
 
 // Decode a int16_t
 template<class CHARTYPE, class DECOPRINTER>
-int16_t marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_i16(uint32_t suggestions)
+inline int16_t marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_i16(uint32_t suggestions)
 {
 	DASTD_NOWARN_UNUSED(suggestions);
 	assert(!m_is_typed);
@@ -370,7 +375,7 @@ int16_t marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_i16(uint32_t suggestions
 
 // Decode a uint16_t
 template<class CHARTYPE, class DECOPRINTER>
-uint16_t marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_u16(uint32_t suggestions)
+inline uint16_t marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_u16(uint32_t suggestions)
 {
 	DASTD_NOWARN_UNUSED(suggestions);
 	assert(!m_is_typed);
@@ -382,7 +387,7 @@ uint16_t marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_u16(uint32_t suggestion
 
 // Decode a int32_t
 template<class CHARTYPE, class DECOPRINTER>
-int32_t marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_i32(uint32_t suggestions)
+inline int32_t marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_i32(uint32_t suggestions)
 {
 	DASTD_NOWARN_UNUSED(suggestions);
 	assert(!m_is_typed);
@@ -394,7 +399,7 @@ int32_t marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_i32(uint32_t suggestions
 
 // Decode a uint32_t
 template<class CHARTYPE, class DECOPRINTER>
-uint32_t marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_u32(uint32_t suggestions)
+inline uint32_t marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_u32(uint32_t suggestions)
 {
 	DASTD_NOWARN_UNUSED(suggestions);
 	assert(!m_is_typed);
@@ -406,7 +411,7 @@ uint32_t marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_u32(uint32_t suggestion
 
 // Decode a int64_t
 template<class CHARTYPE, class DECOPRINTER>
-int64_t marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_i64(uint32_t suggestions)
+inline int64_t marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_i64(uint32_t suggestions)
 {
 	DASTD_NOWARN_UNUSED(suggestions);
 	assert(!m_is_typed);
@@ -418,7 +423,7 @@ int64_t marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_i64(uint32_t suggestions
 
 // Decode a uint64_t
 template<class CHARTYPE, class DECOPRINTER>
-uint64_t marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_u64(uint32_t suggestions)
+inline uint64_t marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_u64(uint32_t suggestions)
 {
 	DASTD_NOWARN_UNUSED(suggestions);
 	assert(!m_is_typed);
@@ -430,7 +435,7 @@ uint64_t marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_u64(uint32_t suggestion
 
 // Decode a 64-bit floating point
 template<class CHARTYPE, class DECOPRINTER>
-double marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_f64(uint32_t suggestions)
+inline double marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_f64(uint32_t suggestions)
 {
 	DASTD_NOWARN_UNUSED(suggestions);
 	assert(!m_is_typed);
@@ -440,6 +445,20 @@ double marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_f64(uint32_t suggestions)
 	return pair.first;
 }
 
+// Decode a 128-bit UUID
+template<class CHARTYPE, class DECOPRINTER>
+inline uuid marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_uuid(uint32_t suggestions)
+{
+	std::string value;
+	decode_string_utf8(value, suggestions);
+	uuid v_uuid;
+    if (!value.empty()) {
+	    if (!v_uuid.parse(value)) {
+		    DASTD_THROW(exception_marshal, "marshal_dec_json::decode_uuid: expected UUID, got " << DECOPRINTER(m_tokenizer.get_raw_token()));
+	    }
+    }
+	return v_uuid;
+}
 
 // Decode a std::string (UTF-8)
 template<class CHARTYPE, class DECOPRINTER>
@@ -605,7 +624,7 @@ inline void marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_struct_field_end()
 
 // Start decoding an array
 template<class CHARTYPE, class DECOPRINTER>
-size_t marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_array_begin()
+inline size_t marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_array_begin()
 {
 	assert(!m_is_typed);
 	if (!m_stack.empty()) {
@@ -637,7 +656,7 @@ inline void marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_array_end()
 
 // Start decoding an array element
 template<class CHARTYPE, class DECOPRINTER>
-bool marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_array_element_begin()
+inline bool marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_array_element_begin()
 {
 	assert(!m_is_typed);
 	if (m_stack.empty()) DASTD_THROW(exception_marshal, "Invoked decode_array_element_begin without being inside a ARRAY (stack empty)");
@@ -708,7 +727,7 @@ inline void marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_dictionary_end()
 
 // Start decoding a dictionary element
 template<class CHARTYPE, class DECOPRINTER>
-bool marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_dictionary_element_begin(std::string& key)
+inline bool marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_dictionary_element_begin(std::string& key)
 {
 	assert(!m_is_typed);
 	if (m_stack.empty()) DASTD_THROW(exception_marshal, "Invoked decode_dictionary_element_begin without being inside a DICTIONARY (stack empty)");

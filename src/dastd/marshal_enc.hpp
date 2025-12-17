@@ -78,6 +78,11 @@ namespace dastd {
 			/// @param suggestions Encoding suggestions; see @link marshaling_suggestions documentation @endlink.
 			virtual void encode_f64(double value, uint32_t suggestions=0) = 0;
 
+			/// @brief Encode a UUID
+			/// @param value Value to be encoded.
+			/// @param suggestions Encoding suggestions; see @link marshaling_suggestions documentation @endlink.
+			virtual void encode_uuid(const uuid& value, uint32_t suggestions=0) = 0;
+
 			/// @brief Encode a std::string (UTF-8)
 			/// @param value Value to be encoded.
 			/// @param suggestions Encoding suggestions; see @link marshaling_suggestions documentation @endlink.

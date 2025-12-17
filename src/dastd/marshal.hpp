@@ -278,6 +278,7 @@
 #include "exception.hpp"
 #include "hash_crc32.hpp"
 #include "fmt.hpp"
+#include "uuid.hpp"
 #include <cassert>
 
 namespace dastd {

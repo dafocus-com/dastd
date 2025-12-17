@@ -99,6 +99,11 @@ namespace dastd {
 			/// @param suggestions Encoding suggestions; see @link marshaling_suggestions documentation @endlink.
 			virtual double decode_f64(uint32_t suggestions=0) = 0;
 
+			/// @brief Decode a 128-bit UUID
+			/// @return Return the decoded data
+			/// @param suggestions Encoding suggestions; see @link marshaling_suggestions documentation @endlink.
+			virtual uuid decode_uuid(uint32_t suggestions=0) = 0;
+
 			/// @brief Decode a std::string (UTF-8)
 			/// @param value Receives the decoded data
 			/// @param suggestions Encoding suggestions; see @link marshaling_suggestions documentation @endlink.

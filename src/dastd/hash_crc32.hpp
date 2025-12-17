@@ -20,10 +20,10 @@ namespace dastd {
 class hash_crc32: public hash {
 	private:
 		// Initial value
-		static constexpr uint32_t CRC32BASE = 0xffffffffUL;
+		static constexpr uint32_t k_CRC32BASE = 0xffffffffUL;
 
 		// Internal crc-32 sum
-		uint32_t m_crc32 = CRC32BASE;
+		uint32_t m_crc32 = k_CRC32BASE;
 
 	protected:
 		/// @brief Virtual method that adds the indicated bytes to the current hash sum using CRC-32
@@ -36,7 +36,7 @@ class hash_crc32: public hash {
 
 	public:
 		/// @brief reset the hash calculator to its initial state.
-		virtual void clear() override {m_crc32 = CRC32BASE;}
+		virtual void clear() override {m_crc32 = k_CRC32BASE;}
 
 		/// @brief Print the current hash
 		virtual void print(std::ostream& o) const override {o << "0x" << fmt(get(), 16, 8);}

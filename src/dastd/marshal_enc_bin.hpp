@@ -92,6 +92,11 @@ class marshal_enc_bin: public marshal_enc {
 		/// @param suggestions Encoding suggestions; see @link marshaling_suggestions documentation @endlink.
 		virtual void encode_f64(double value, uint32_t suggestions=0) override;
 
+		/// @brief Encode a UUID
+		/// @param value Value to be encoded.
+		/// @param suggestions Encoding suggestions; see @link marshaling_suggestions documentation @endlink.
+		virtual void encode_uuid(const uuid& value, uint32_t suggestions=0) override;
+
 		/// @brief Encode a std::string (UTF-8)
 		/// @param value Value to be encoded.
 		/// @param suggestions Encoding suggestions; see @link marshaling_suggestions documentation @endlink.
@@ -367,6 +372,16 @@ inline void marshal_enc_bin<STREAMPOS>::encode_f64(double value, uint32_t sugges
 	uint8_t encoded[8];
 	native_to_little_endian(pack_f64(value), encoded);
 	write_bytes(encoded, 8);
+}
+
+
+// Encode a UUID
+template<class STREAMPOS>
+inline void marshal_enc_bin<STREAMPOS>::encode_uuid(const uuid& value, uint32_t suggestions)
+{
+	uuid::array_t buffer;
+	value.get_binary(buffer);
+	encode_binary(buffer.data(), buffer.size(), suggestions);
 }
 
 // Encode a std::string (UTF-8)

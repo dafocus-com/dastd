@@ -17,7 +17,7 @@ constexpr uint8_t NOT_A_INTEGRAL_CHAR = 36;
 /// @param ch The character to be converted
 ///
 /// @return Returns the number or NOT_A_INTEGRAL_CHAR in case of error.
-template<class NUMTYPE, class CHARTYPE>
+template<concept_integral NUMTYPE, class CHARTYPE>
 NUMTYPE char_to_integral(CHARTYPE ch)
 {
 	if (ch >= '0' && ch <= '9') return (NUMTYPE)(ch-'0');
@@ -52,11 +52,9 @@ class strtointegral_constants {
 ///     if (pair.first) cout << "Valid: " << pair.second;
 ///     else cout << "Invalid";
 ///
-template<class NUMTYPE, class CHARTYPE>
+template<concept_integral NUMTYPE, class CHARTYPE>
 class strtointegral_t: public strtointegral_constants {
 	public:
-
-		static_assert(std::is_integral<NUMTYPE>::value, "Integral required");
 
 		/// @brief Execute the conversion from a constant string
 		///
@@ -175,7 +173,7 @@ inline std::ostream& operator<<(std::ostream& o, strtointegral_constants::result
 }
 
 /// Execute the one conversion step
-template<class NUMTYPE, class CHARTYPE>
+template<concept_integral NUMTYPE, class CHARTYPE>
 bool strtointegral_t<NUMTYPE,CHARTYPE>::add_char(CHARTYPE ch, conversion_state& state)
 {
 	NUMTYPE number = char_to_integral<NUMTYPE,CHARTYPE>(ch);
@@ -210,7 +208,7 @@ bool strtointegral_t<NUMTYPE,CHARTYPE>::add_char(CHARTYPE ch, conversion_state& 
 }
 
 /// Execute the one conversion step
-template<class NUMTYPE, class CHARTYPE>
+template<concept_integral NUMTYPE, class CHARTYPE>
 bool strtointegral_t<NUMTYPE,CHARTYPE>::convert_step(CHARTYPE ch, NUMTYPE min_value, NUMTYPE max_value, conversion_state& state)
 {
 	bool valid;
@@ -351,7 +349,7 @@ bool strtointegral_t<NUMTYPE,CHARTYPE>::convert_step(CHARTYPE ch, NUMTYPE min_va
 
 
 /// Execute the conversion from a constant string
-template<class NUMTYPE, class CHARTYPE>
+template<concept_integral NUMTYPE, class CHARTYPE>
 void strtointegral_t<NUMTYPE,CHARTYPE>::convert(const CHARTYPE* str, size_t str_len, unsigned base, NUMTYPE min_value, NUMTYPE max_value)
 {
 	clear();
@@ -370,7 +368,7 @@ void strtointegral_t<NUMTYPE,CHARTYPE>::convert(const CHARTYPE* str, size_t str_
 }
 
 /// Execute the conversion from a vector
-template<class NUMTYPE, class CHARTYPE>
+template<concept_integral NUMTYPE, class CHARTYPE>
 void strtointegral_t<NUMTYPE,CHARTYPE>::convert(const std::basic_string_view<CHARTYPE>& str, unsigned base, NUMTYPE min_value, NUMTYPE max_value)
 {
 	clear();
@@ -394,7 +392,7 @@ void strtointegral_t<NUMTYPE,CHARTYPE>::convert(const std::basic_string_view<CHA
 ///
 /// @return Return a pair containing as `first` the data and `second` set to `true`
 ///         in case the parsing is valid; returns `data_on_fail' and `false` otherwise.
-template<class NUMTYPE, class CHARTYPE>
+template<concept_integral NUMTYPE, class CHARTYPE>
 std::pair<NUMTYPE,bool> strtointegral(const CHARTYPE* str, NUMTYPE data_on_fail=0, size_t str_len=strtointegral_constants::calc_size, unsigned base=strtointegral_constants::detect_base, NUMTYPE min_value=std::numeric_limits<NUMTYPE>::lowest(), NUMTYPE max_value=std::numeric_limits<NUMTYPE>::max())
 {
 	strtointegral_t<NUMTYPE,CHARTYPE> sit;
@@ -411,7 +409,7 @@ std::pair<NUMTYPE,bool> strtointegral(const CHARTYPE* str, NUMTYPE data_on_fail=
 ///
 /// @return Return a pair containing as `first` the data and `second` set to `true`
 ///         in case the parsing is valid; returns `data_on_fail' and `false` otherwise.
-template<class NUMTYPE, class CHARTYPE>
+template<concept_integral NUMTYPE, class CHARTYPE>
 std::pair<NUMTYPE,bool> strtointegral(const std::basic_string_view<CHARTYPE>& str, NUMTYPE data_on_fail=0, unsigned base=strtointegral_constants::detect_base, NUMTYPE min_value=std::numeric_limits<NUMTYPE>::lowest(), NUMTYPE max_value=std::numeric_limits<NUMTYPE>::max())
 {
 	strtointegral_t<NUMTYPE,CHARTYPE> sit;
