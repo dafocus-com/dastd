@@ -14,6 +14,7 @@
 #include <ostream>
 #include <sstream>
 #include <vector>
+#include <limits>
 namespace dastd {
 
 enum class fmt_bin_format {
@@ -33,19 +34,22 @@ class fmt_bin {
 		/// @brief Constructor
 		/// @param ptr Binary pointer
 		/// @param len Length of the data
-		/// @param m_flags See DASTD_FMTBINASCII_xxx
-		fmt_bin(const void* ptr, size_t len, fmt_bin_format format=fmt_bin_format::HEX_DUMP): m_ptr(ptr), m_len(len), m_format(format) {}
+		/// @param format See @ref fmt_bin_format
+		/// @param truncate_at Truncates the binary data if longer than `truncate_at` bytes
+		fmt_bin(const void* ptr, size_t len, fmt_bin_format format=fmt_bin_format::HEX_DUMP, size_t truncate_at = std::numeric_limits<size_t>::max()): m_ptr(ptr), m_len(len), m_format(format), m_truncate_at(truncate_at) {}
 
 		/// @brief Constructor
 		/// @param s String to be printed
-		/// @param m_flags See DASTD_FMTBINASCII_xxx
-		fmt_bin(const std::string_view& s, fmt_bin_format format=fmt_bin_format::HEX_DUMP): m_format(format) {m_ptr = s.data(); m_len=s.length();}
+		/// @param format See @ref fmt_bin_format
+		/// @param truncate_at Truncates the binary data if longer than `truncate_at` bytes
+		fmt_bin(const std::string_view& s, fmt_bin_format format=fmt_bin_format::HEX_DUMP, size_t truncate_at = std::numeric_limits<size_t>::max()): m_format(format), m_truncate_at(truncate_at) {m_ptr = s.data(); m_len=s.length();}
 
 		/// @brief Constructor
 		/// @param s Vector to be printed
-		/// @param m_flags See DASTD_FMTBINASCII_xxx
+		/// @param format See @ref fmt_bin_format
+		/// @param truncate_at Truncates the binary data if longer than `truncate_at` bytes
 		template <class CHARTYPE>
-		fmt_bin(const std::vector<CHARTYPE>& s, fmt_bin_format format=fmt_bin_format::HEX_DUMP): m_format(format) {m_ptr = (const void*)s.data(); m_len=s.size();}
+		fmt_bin(const std::vector<CHARTYPE>& s, fmt_bin_format format=fmt_bin_format::HEX_DUMP, size_t truncate_at = std::numeric_limits<size_t>::max()): m_format(format), m_truncate_at(truncate_at) {m_ptr = (const void*)s.data(); m_len=s.size();}
 
 		/// @brief Print the contents
 		void print(std::ostream& o) const;
@@ -54,9 +58,17 @@ class fmt_bin {
 		std::string str() const {std::ostringstream ret; print(ret); return ret.str();}
 
 	private:
+		/// @brief Pointer to the binary data
 		const void* m_ptr;
+
+		/// @brief Length of the binary data
 		size_t m_len;
+
+		/// @brief Format of the print
 		fmt_bin_format m_format;
+
+		/// @brief Truncation point
+		size_t m_truncate_at;
 
 		/// @brief Print the contents using HEX_DUMP format
 		void print_hex_dump(std::ostream& o, bool lower_case) const;
@@ -93,6 +105,10 @@ inline void fmt_bin::print_two_hex_digits(std::ostream& o, bool lower_case) cons
 	size_t i;
 	for(i=0; i<m_len; i++) {
 		o << (i?" ":"") << fmt(((const uint8_t*)m_ptr)[i], 16, 2, lower_case);
+		if (i >= m_truncate_at) {
+			o << "...";
+			break;
+		}
 	}
 }
 
@@ -104,13 +120,14 @@ inline void fmt_bin::print_hex_dump(std::ostream& o, bool lower_case) const
 	static constexpr size_t bytes_per_line = 8;
 	static constexpr uint32_t INVALID_CHAR = UINT32_MAX;
 
-	if (m_len == 0) {o << "<empty>" << std::endl; return;}
+	size_t len = (m_len > m_truncate_at ? m_truncate_at : m_len);
+	if (len == 0) {o << "<empty>" << std::endl; return;}
 
-	size_t remainder = (m_len % bytes_per_line);
+	size_t remainder = (len  % bytes_per_line);
 
 	// The upper_end value is an exact multiple of bytes_per_line. It
-	// can be bigger than m_len.
-	size_t upper_end = (remainder==0 ? m_len : m_len+bytes_per_line-remainder);
+	// can be bigger than len .
+	size_t upper_end = (remainder==0 ? len  : len +bytes_per_line-remainder);
 	size_t lines = upper_end/bytes_per_line;
 	size_t line, col, ofs;
 
@@ -118,14 +135,14 @@ inline void fmt_bin::print_hex_dump(std::ostream& o, bool lower_case) const
 		o << "0x" << fmt(line*bytes_per_line, 16, 8, lower_case) << ":";
 		for (col=0; col<bytes_per_line; col++) {
 			ofs = line*bytes_per_line+col;
-			uint32_t ch = (ofs < m_len ? ((const uint8_t*)m_ptr)[ofs] : INVALID_CHAR);
+			uint32_t ch = (ofs < len ? ((const uint8_t*)m_ptr)[ofs] : INVALID_CHAR);
 			if (ch == INVALID_CHAR) o << " --";
 			else o << " " << fmt(ch, 16, 2, lower_case);
 		}
 		o << "  ";
 		for (col=0; col<bytes_per_line; col++) {
 			ofs = line*bytes_per_line+col;
-			uint32_t ch = (ofs < m_len ? ((const uint8_t*)m_ptr)[ofs] : INVALID_CHAR);
+			uint32_t ch = (ofs < len ? ((const uint8_t*)m_ptr)[ofs] : INVALID_CHAR);
 			if (ch == INVALID_CHAR) o << ' ';
 			else if (ch>=32 && ch<127) {
 				o << ((char)ch);
@@ -146,6 +163,10 @@ inline void fmt_bin::print_bits(std::ostream& o) const
 	for(i=0; i<m_len; i++) {
 		for (s=0; s<8; s++) {
 			o << ((((const uint8_t*)m_ptr)[i] & (1 << (7-s))) != 0 ? '1' : '0');
+		}
+		if (i >= m_truncate_at) {
+			o << "...";
+			break;
 		}
 	}
 }
