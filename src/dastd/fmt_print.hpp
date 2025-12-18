@@ -55,9 +55,9 @@ class fmt_print {
 		/// @param fmt Format to be applied
 		fmt_print(const PRINTABLE& printable, const fmt_print_t& fmt): m_printable(printable), m_fmt(fmt) {}
 
-        /// @brief Print the data
-        /// @param o Output stream
-        void print(std::ostream& o) const {m_printable.print(o, m_fmt);}
+		/// @brief Print the data
+		/// @param o Output stream
+		void print(std::ostream& o) const {m_printable.print(o, m_fmt);}
 };
 
 template<class PRINTABLE>

@@ -304,10 +304,10 @@ void print_SIMPLE_ESCAPED(std::ostream& o, CHARTYPE code_point1)
 	switch(cp1) {
 		case escapeChar: o << escapeChar << escapeChar; break;
 		default: {
-		bool forceHex = false;
-		if constexpr (DASTD_ISSET(FORMAT, fmt_string_f::SIMPLE_ESC_DOUBLE_QUOTES_AS_HEX)) {
-			if (cp1 == '"') forceHex=true;
-		}
+			bool forceHex = false;
+			if constexpr (DASTD_ISSET(FORMAT, fmt_string_f::SIMPLE_ESC_DOUBLE_QUOTES_AS_HEX)) {
+				if (cp1 == '"') forceHex=true;
+			}
 			if ((cp1 >= ' ') && (cp1 < 127) && !forceHex) {
 				o << (char)cp1;
 			}

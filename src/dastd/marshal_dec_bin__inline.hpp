@@ -128,7 +128,7 @@ inline uuid marshal_dec_bin::decode_uuid(uint32_t suggestions)
 {
 	DASTD_NOWARN_UNUSED(suggestions);
 	uuid::array_t buffer;
-	decode_binary(buffer.data(), buffer.size(), suggestions);
+	decode_binary(buffer, uuid::UUID_LEN_IN_BYTES, suggestions);
 	return uuid(buffer);
 }
 

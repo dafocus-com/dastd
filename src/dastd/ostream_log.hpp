@@ -142,7 +142,7 @@ class ostream_log: public ostream_broadcast {
 		/// This method can be overridden to have custom line headers. It will be invoked
 		/// with the stream already locked.
 		///
-		/// @param line_number  Indicates the line number within the same begin/end root
+		/// @param line_number Indicates the line number within the same begin/end root
 		///                    locking pair. First line is 0.
 		virtual void print_header(uint32_t line_number);
 

@@ -123,7 +123,7 @@ struct decomposed_time {
 	decomposed_time(uint32_t year, uint32_t month, uint32_t day) {clear(); m_year=year; m_month=month; m_day=day;}
 
 	/// @brief Parametric constructor
-		decomposed_time(uint32_t year, uint32_t month, uint32_t day, uint32_t hours, uint32_t mins, uint32_t secs, timezone tz) {clear(); m_year=year; m_month=month; m_day=day; m_hours=hours; m_mins=mins; m_secs=secs; m_tz=tz;}
+	decomposed_time(uint32_t year, uint32_t month, uint32_t day, uint32_t hours, uint32_t mins, uint32_t secs, timezone tz) {clear(); m_year=year; m_month=month; m_day=day; m_hours=hours; m_mins=mins; m_secs=secs; m_tz=tz;}
 
 	// RESET
 	void clear() {

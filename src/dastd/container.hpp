@@ -24,7 +24,7 @@ using vector_shared_ptr = std::vector<std::shared_ptr<CLS>>;
 ///
 template<class CLS>
 struct shared_ptr_less {
-	bool operator()(const std::shared_ptr<CLS>& lhs, const std::shared_ptr<CLS>& rhs) const {return (*lhs) < (*rhs);}
+    bool operator()(const std::shared_ptr<CLS>& lhs, const std::shared_ptr<CLS>& rhs) const {return (*lhs) < (*rhs);}
 };
 
 /// @brief Implementation of the std::set that owns its elements allocated with new and allows searching with a unique key.

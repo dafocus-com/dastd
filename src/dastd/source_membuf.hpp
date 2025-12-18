@@ -64,7 +64,7 @@ class source_membuf: public source_with_peek<CHARTYPE> {
 		/// This call is meant to allow preallocation of data with a good guess.
 		virtual size_t tentative_count() const override {return m_remaining;}
 
-        /// @brief Non-blocking method to read data from the source without extracting it
+    /// @brief Non-blocking method to read data from the source without extracting it
 		///
 		/// This method will attempt to read up to `data_size` characters.
 		/// If less (or even zero) characters are available, it will read them

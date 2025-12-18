@@ -27,7 +27,7 @@ class uuid {
 		static constexpr size_t ENCODED_LEN = 36;
 
 		/// @brief Binary array of 16 bytes containing the UUID
-		using array_t = std::array<uint8_t,UUID_LEN_IN_BYTES>;
+		using array_t = uint8_t[UUID_LEN_IN_BYTES];
 
 	private:
 		union {
@@ -215,7 +215,8 @@ inline void uuid::set_binary(const array_t& buffer)
 // Generate a random UUID
 inline void uuid::set_random()
 {
-	g_random.random_bytes(m_value.m_bytes.data(), m_value.m_bytes.size());
+	g_random.random_bytes(m_value.m_bytes, UUID_LEN_IN_BYTES);
+
 	// Set the most significant bit to avoid having this UUID appear as a legacy Apollo NCS UUID
 	m_value.m_bytes[0] |= 0x80;
 }

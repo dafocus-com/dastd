@@ -381,7 +381,7 @@ inline void marshal_enc_bin<STREAMPOS>::encode_uuid(const uuid& value, uint32_t 
 {
 	uuid::array_t buffer;
 	value.get_binary(buffer);
-	encode_binary(buffer.data(), buffer.size(), suggestions);
+	encode_binary(buffer, uuid::UUID_LEN_IN_BYTES, suggestions);
 }
 
 // Encode a std::string (UTF-8)

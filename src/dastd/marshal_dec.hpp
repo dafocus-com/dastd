@@ -121,7 +121,7 @@ namespace dastd {
 			void decode_binary(void* buffer, size_t length, uint32_t suggestions=0) {internal_decode_binary(buffer, length, suggestions);}
 
 			/// @brief Decode raw binary data of a known and fixed length into a std::string
-			/// @param value Receives the raw  decoded data
+			/// @param value Receives the raw decoded data
 			/// @param length Number of bytes expected
 			/// @param suggestions Encoding suggestions; see @link marshaling_suggestions documentation @endlink.
 			void decode_binary(std::string& value, size_t length, uint32_t suggestions=0);
@@ -269,7 +269,7 @@ namespace dastd {
 	};
 
 	// (brief) Decode raw binary data of a known and fixed length
-	// (param) value Receives the raw  decoded data
+	// (param) value Receives the raw decoded data
 	// (param) suggestions Encoding suggestions; see @link marshaling_suggestions documentation @endlink.
 	inline void marshal_dec::decode_binary(std::string& value, size_t length, uint32_t suggestions)
 	{
