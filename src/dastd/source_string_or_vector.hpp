@@ -87,9 +87,9 @@ class source_string_or_vector: public source_with_peek<CHARTYPE> {
 template<class CHARTYPE>
 size_t source_string_or_vector<CHARTYPE>::tentative_read(CHARTYPE* data, size_t data_size)
 {
-	size_t bytes_read = tentative_peek(data, data_size);
-	m_offset += bytes_read;
-	return bytes_read;
+	size_t characters_read = tentative_peek(data, data_size);
+	m_offset += characters_read;
+	return characters_read;
 }
 
 
@@ -112,7 +112,7 @@ size_t source_string_or_vector<CHARTYPE>::tentative_peek(CHARTYPE* data, size_t 
 {
 	size_t remaining = tentative_count();
 	if (data_size > remaining) data_size = remaining;
-	memcpy(data, m_string.data()+m_offset, data_size);
+	memcpy(data, m_string.data()+m_offset, data_size*sizeof(CHARTYPE));
 	return data_size;
 }
 

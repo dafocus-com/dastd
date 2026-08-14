@@ -9,6 +9,9 @@
 * as "spaces" comments in the slash-star form (like C) and in the single
 * line slash-slash form and hash (#) form.
 * 
+* The "relaxed decoding" mode will also detect valid identifiers as `C_STRING`
+* even when not quoted.
+* 
 * 
 * CHARACTER FETCHING
 * ^^^^^^^^^^^^^^^^^^
@@ -21,7 +24,7 @@
 **/
 #pragma once
 #include "defs.hpp"
-#include "source_with_peek.hpp"
+#include "source_lookahead.hpp"
 #include "string_or_vector.hpp"
 #include "char32string.hpp"
 #include "strtointegral.hpp"
@@ -265,7 +268,7 @@ class json_tokenizer_base {
 		// UPDATE ACCESS SECTION
 		//--------------------------------------------------------
 		/// @brief Constructor
-        /// @param first_char  Anticipate the first character (see CHARACTER FETCHING in the header)
+    /// @param first_char  Anticipate the first character (see CHARACTER FETCHING in the header)
 		/// @param flags See the "FLAGS" section above
 		json_tokenizer_base(CHARTYPE first_char, uint32_t flags): m_flags(flags), m_prev_char(first_char) {clear();}
 
@@ -311,12 +314,28 @@ class json_tokenizer: public json_tokenizer_base<CHARTYPE,RAWSTRING> {
 		json_tokenizer_ret process_eof() {return json_tokenizer_base<CHARTYPE,RAWSTRING>::internal_process_eof();}
 };
 
+
+/// @brief Class used to source the characters into a `json_tokenizer_sourced`
+/// @tparam CHARTYPE Type of the character, like `char` or so.
+/// 
+/// This source will require the reading of a character in advance, thus
+/// it is derived from a `source_lookahead`. If multiple chained JSON files are
+/// to be decoded, reuse the `json_tokenizer_source` and not the internal `source`
+/// because an extra character will be consumed at the end.
+template<class CHARTYPE>
+class json_tokenizer_source: public source_lookahead<CHARTYPE, 1> {
+	public:
+		/// @brief Constructor
+		/// @param source The source providing with the data
+		json_tokenizer_source(source<CHARTYPE>& source): source_lookahead<CHARTYPE, 1>(source) {}
+};
+
 /// @brief Implementation that automatically fetches data from a source
 template<class CHARTYPE, class RAWSTRING = string_or_vector<CHARTYPE>>
 class json_tokenizer_sourced: public json_tokenizer_base<CHARTYPE,RAWSTRING> {
 	private:
 		/// @brief Source used to fetch characters
-		source_with_peek<CHARTYPE>& m_source;
+		json_tokenizer_source<CHARTYPE>& m_source;
 
 	public:
 		//--------------------------------------------------------
@@ -324,10 +343,10 @@ class json_tokenizer_sourced: public json_tokenizer_base<CHARTYPE,RAWSTRING> {
 		//--------------------------------------------------------
 		/// @brief Constructor
 		/// @param flags See the "FLAGS" section above
-		json_tokenizer_sourced(source_with_peek<CHARTYPE>& source, uint32_t flags=0): json_tokenizer_base<CHARTYPE,RAWSTRING>((CHARTYPE)0, flags), m_source(source) 
+		json_tokenizer_sourced(json_tokenizer_source<CHARTYPE>& source, uint32_t flags=0): json_tokenizer_base<CHARTYPE,RAWSTRING>((CHARTYPE)0, flags), m_source(source) 
 		{
 			CHARTYPE ch;
-			if (source.tentative_peek_char(ch)) this->set_first_char(ch);
+			if (m_source.peek(0, ch)) this->set_first_char(ch);
 			else this->internal_process_eof();
 		}
 
@@ -927,8 +946,8 @@ json_tokenizer_ret json_tokenizer_sourced<CHARTYPE,RAWSTRING>::fetch_token()
 	for(;;) {
 		CHARTYPE ch;
 		//if (m_source.tentative_read_char(ch)) {
-        m_source.tentative_read_char(ch);
-        if (m_source.tentative_peek_char(ch)) {
+		m_source.tentative_read_char(ch);
+		if (m_source.peek(0, ch)) {
 			ret = json_tokenizer_base<CHARTYPE,RAWSTRING>::internal_process_char(ch);
 		}
 		else {

@@ -105,7 +105,7 @@ class fmt_string {
 /// @brief Print a path in reasonable readable way
 class fmt_path: public fmt_string<char, fmt_string_f::SIMPLE_ESCAPED_QUOTED> {
 	public:
-		fmt_path(const std::filesystem::path& path): fmt_string<char, fmt_string_f::SIMPLE_ESCAPED_QUOTED>(path.string()) {}
+		fmt_path(const std::filesystem::path& path): fmt_string<char, fmt_string_f::SIMPLE_ESCAPED_QUOTED>(path.lexically_normal().make_preferred().string()) {}
 };
 
 #if 0
@@ -122,6 +122,7 @@ using fmt_js = fmt_string<char, fmt_string_f::JS_ESCAPED>;
 using fmt_utf8 = fmt_string<char, fmt_string_f::UTF8>;
 using fmt_ca = fmt_string<char, fmt_string_f::C11_ESCAPED_AUTOREQUOTE>;
 using fmt_caq = fmt_string<char, fmt_string_f::C11_ESCAPED_AUTOREQUOTE_QUOTED>;
+using fmt_caq_nl = fmt_string<char, fmt_string_f::C11_ESCAPED_AUTOREQUOTE_QUOTED_NL>;
 using fmt_s = fmt_string<char, fmt_string_f::SIMPLE_ESCAPED>;
 using fmt_sq = fmt_string<char, fmt_string_f::SIMPLE_ESCAPED_QUOTED>;
 #endif
@@ -132,6 +133,7 @@ using fmt16_js = fmt_string<char16_t, fmt_string_f::JS_ESCAPED>;
 using fmt16_utf8 = fmt_string<char16_t, fmt_string_f::UTF8>;
 using fmt16_ca = fmt_string<char16_t, fmt_string_f::C11_ESCAPED_AUTOREQUOTE>;
 using fmt16_caq = fmt_string<char16_t, fmt_string_f::C11_ESCAPED_AUTOREQUOTE_QUOTED>;
+using fmt16_caq_nl = fmt_string<char16_t, fmt_string_f::C11_ESCAPED_AUTOREQUOTE_QUOTED_NL>;
 using fmt16_s = fmt_string<char16_t, fmt_string_f::SIMPLE_ESCAPED>;
 using fmt16_sq = fmt_string<char16_t, fmt_string_f::SIMPLE_ESCAPED_QUOTED>;
 
@@ -142,6 +144,7 @@ using fmt32_js = fmt_string<char32_t, fmt_string_f::JS_ESCAPED>;
 using fmt32_utf8 = fmt_string<char32_t, fmt_string_f::UTF8>;
 using fmt32_ca = fmt_string<char32_t, fmt_string_f::C11_ESCAPED_AUTOREQUOTE>;
 using fmt32_caq = fmt_string<char32_t, fmt_string_f::C11_ESCAPED_AUTOREQUOTE_QUOTED>;
+using fmt32_caq_nl = fmt_string<char32_t, fmt_string_f::C11_ESCAPED_AUTOREQUOTE_QUOTED_NL>;
 using fmt32_s = fmt_string<char32_t, fmt_string_f::SIMPLE_ESCAPED>;
 using fmt32_sq = fmt_string<char32_t, fmt_string_f::SIMPLE_ESCAPED_QUOTED>;
 
@@ -176,22 +179,30 @@ void print_UTF8(std::ostream& o, const std::basic_string_view<CHARTYPE>& text)
 /// @tparam CHARTYPE    Character type (char, char32_t, etc)
 /// @param o            Output string
 /// @param code_point1   Input character
-/// @param code_point2   If set to other than zero, it expects to contain the character
-///                     following 'code_point1'.
+/// @param code_point2   It expects to contain the character following 'code_point1'
+///                      unless `code_point2_is_eof` is `true`
+/// @param code_point2_is_eof  Tells that `code_point2` is EOF no matter of its value
 template<class CHARTYPE, fmt_string_format_t FORMAT=fmt_string_f::FMT_DEFAULT>
-void print_C11_ESCAPED_AUTOREQUOTE(std::ostream& o, CHARTYPE code_point1, CHARTYPE code_point2)
+void print_C11_ESCAPED_AUTOREQUOTE(std::ostream& o, CHARTYPE code_point1, CHARTYPE code_point2, bool code_point2_is_eof)
 {
 	static_assert(std::is_integral<CHARTYPE>::value, "CHARTYPE must be integral, like 'char', 'char32_t', etc.)");
 	std::make_unsigned_t<CHARTYPE> cp1 = (std::make_unsigned_t<CHARTYPE>)code_point1;
 	std::make_unsigned_t<CHARTYPE> cp2 = (std::make_unsigned_t<CHARTYPE>)code_point2;
 
 	bool lower_case_hex = fmt_string_f::has_flag(FORMAT, fmt_string_f::LOWERCASE_HEX);
+	bool newlines_on_new_lines = fmt_string_f::has_flag(FORMAT, fmt_string_f::NEWLINES_ON_NEW_LINES);
 
 	switch(cp1) {
 		case '\\': o << "\\\\"; break;
 		case '\0': o << "\\0"; break;
 		case '\r': o << "\\r"; break;
-		case '\n': o << "\\n"; break;
+		case '\n': {
+			o << "\\n"; 
+			if (newlines_on_new_lines && !code_point2_is_eof) {
+				o << "\"" << std::endl << "\"";
+			}
+			break;
+		}
 		case '\t': o << "\\t"; break;
 		case '"' : o << "\\\""; break;
 		default: {
@@ -208,7 +219,7 @@ void print_C11_ESCAPED_AUTOREQUOTE(std::ostream& o, CHARTYPE code_point1, CHARTY
 				else {
 					o << "\\U" << fmt(cp1, 16, 8, lower_case_hex);
 				}
-				if (cp2 && ((cp2 >= '0' && cp2 <= '9') || (cp2 >= 'A' && cp2 <= 'F') || (cp2 >= 'a' && cp2 <= 'f'))) {
+				if ((!code_point2_is_eof) && ((cp2 >= '0' && cp2 <= '9') || (cp2 >= 'A' && cp2 <= 'F') || (cp2 >= 'a' && cp2 <= 'f'))) {
 					o << "\" \"";
 				}
 			}
@@ -222,7 +233,7 @@ void print_C11_ESCAPED_AUTOREQUOTE(std::ostream& o, CHARTYPE code_point1, CHARTY
 /// @param o            Output string
 /// @param code_point1   Input character
 template<class CHARTYPE, fmt_string_format_t FORMAT=fmt_string_f::FMT_DEFAULT>
-void print_C11_ESCAPED(std::ostream& o, CHARTYPE code_point1) {print_C11_ESCAPED_AUTOREQUOTE<CHARTYPE,FORMAT>(o, code_point1, (CHARTYPE)0);}
+void print_C11_ESCAPED(std::ostream& o, CHARTYPE code_point1) {print_C11_ESCAPED_AUTOREQUOTE<CHARTYPE,FORMAT>(o, code_point1, (CHARTYPE)0, true);}
 
 /// @brief Writes on the indicated ostream the character according
 ///
@@ -242,7 +253,7 @@ void print_C11_ESCAPED(std::ostream& o, const std::basic_string_view<CHARTYPE>& 
 		CHARTYPE prev = 0;
 		for (CHARTYPE code_point: text) {
 			if (first) {first=false;}
-			else print_C11_ESCAPED_AUTOREQUOTE<CHARTYPE,FORMAT>(o, prev, code_point);
+			else print_C11_ESCAPED_AUTOREQUOTE<CHARTYPE,FORMAT>(o, prev, code_point, false);
 			prev=code_point;
 		}
 		if (!first) print_C11_ESCAPED<CHARTYPE,FORMAT>(o, prev);
@@ -349,7 +360,7 @@ void print_8bit_format(std::ostream& o, const CHARTYPE* string, size_t length)
 	switch(fmt_string_f::main_mode(FORMAT)) {
 		case fmt_string_f::UTF8       : for (i=0; i<length; i++) print_UTF8(o, string[i]); break;
 		case fmt_string_f::C11_ESCAPED: for (i=0; i<length; i++) print_C11_ESCAPED<CHARTYPE,FORMAT>(o, string[i]); break;
-		case fmt_string_f::C11_ESCAPED_AUTOREQUOTE: for (i=0; i<length; i++) print_C11_ESCAPED_AUTOREQUOTE<CHARTYPE,FORMAT>(o, string[i], (i+1 < length ? string[i+1] : (CHARTYPE)0)); break;
+		case fmt_string_f::C11_ESCAPED_AUTOREQUOTE: for (i=0; i<length; i++) print_C11_ESCAPED_AUTOREQUOTE<CHARTYPE,FORMAT>(o, string[i], (i+1 < length ? string[i+1] : (CHARTYPE)0), (i+1 >= length)); break;
 		case fmt_string_f::JS_ESCAPED: for (i=0; i<length; i++) print_JS_ESCAPED<CHARTYPE,FORMAT>(o, string[i]); break;
 		case fmt_string_f::SIMPLE_ESCAPED: for (i=0; i<length; i++) print_SIMPLE_ESCAPED<CHARTYPE,FORMAT>(o, string[i]); break;
 		default:;
@@ -364,7 +375,7 @@ void print_8bit_format(std::ostream& o, const CHARTYPE* stringZ)
 	switch(fmt_string_f::main_mode(FORMAT)) {
 		case fmt_string_f::UTF8       : for (i=0; stringZ[i]; i++) print_UTF8(o, stringZ[i]); break;
 		case fmt_string_f::C11_ESCAPED: for (i=0; stringZ[i]; i++) print_C11_ESCAPED<CHARTYPE,FORMAT>(o, stringZ[i]); break;
-		case fmt_string_f::C11_ESCAPED_AUTOREQUOTE: for (i=0; stringZ[i]; i++) print_C11_ESCAPED_AUTOREQUOTE<CHARTYPE,FORMAT>(o, stringZ[i], stringZ[i+1]); break;
+		case fmt_string_f::C11_ESCAPED_AUTOREQUOTE: for (i=0; stringZ[i]; i++) print_C11_ESCAPED_AUTOREQUOTE<CHARTYPE,FORMAT>(o, stringZ[i], stringZ[i+1], (stringZ[i+1]==0)); break;
 		case fmt_string_f::JS_ESCAPED: for (i=0; stringZ[i]; i++) print_JS_ESCAPED<CHARTYPE,FORMAT>(o, stringZ[i]); break;
 		case fmt_string_f::SIMPLE_ESCAPED: for (i=0; stringZ[i]; i++) print_SIMPLE_ESCAPED<CHARTYPE,FORMAT>(o, stringZ[i]); break;
 		default:;
@@ -412,5 +423,6 @@ void fmt_string<CHARTYPE,FORMAT>::print(std::ostream& o) const
 
 inline std::ostream& operator<<(std::ostream& o, const char32_t* data) {dastd::print_8bit_format(o, data, dastd::fmt_string_f::C11_ESCAPED); return o;}
 inline std::ostream& operator<<(std::ostream& o, char32_t data) {dastd::print_C11_ESCAPED<char32_t>(o, data); return o;}
-inline std::ostream& operator<<(std::ostream& o, const std::u32string_view& data) {dastd::print_C11_ESCAPED(o, data); return o;}
+inline std::ostream& operator<<(std::ostream& o, std::u32string_view data) {dastd::print_C11_ESCAPED(o, data); return o;}
+//inline std::ostream& operator<<(std::ostream& o, const dastd::char32string& data) {return o;}
 //inline std::ostream& operator<<(std::ostream& o, const dastd::flooder_ch32& data) {o << dastd::fmt_string(data); return o;}

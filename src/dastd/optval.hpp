@@ -6,6 +6,7 @@
 #pragma once
 #include <limits>
 #include <iostream>
+#include <string>
 #include "marshal_dec.hpp"
 #include "marshal_enc.hpp"
 
@@ -20,7 +21,7 @@ class optval {
 		bool m_is_set = false;
 
 		/// @brief The transported value
-		TYPE m_value = ((TYPE)0);
+		TYPE m_value = {};
 
 	public:
 		/// @brief Constructor
@@ -43,7 +44,7 @@ class optval {
 		optval& operator=(TYPE value) {m_value=value; m_is_set=true; return *this;}
 
 		/// @brief Reset the object to 
-		void clear() {m_is_set=((TYPE)0); m_value=false;}
+		void clear() {m_is_set=false; m_value={};}
 
 		/// @brief Check if the value is set
 		/// @return Returns `true` if set, `false` if not set
@@ -54,7 +55,10 @@ class optval {
 		bool is_not_set() const {return !is_set();}
 
 		/// @brief Read the internal value; the object must be set, otherwise it asserts
-		TYPE get() const {assert(m_is_set); return m_value;}
+		const TYPE& get() const {assert(m_is_set); return m_value;}
+
+		/// @brief Read the internal value; 
+		const TYPE& get_with_default(const TYPE& default_value) const {return (m_is_set ? m_value : default_value);}
 
 		/// @brief Print the contents
 		/// @param o Output stream
@@ -94,6 +98,9 @@ inline void optval<TYPE>::encode(marshal_enc& enc) const
 	if constexpr (std::is_same_v<TYPE, bool>) {
 		enc.encode_bool(m_value);
 	}
+	else if constexpr (std::is_same_v<TYPE, std::string>) {
+		enc.encode_string_utf8(m_value); 
+	}
 	else {
 		enc.encode<TYPE>(m_value);
 	}
@@ -105,6 +112,9 @@ inline void optval<TYPE>::decode(marshal_dec& dec)
 {
 	if constexpr (std::is_same_v<TYPE, bool>) {
 		m_value = dec.decode_bool(); 
+	}
+	else if constexpr (std::is_same_v<TYPE, std::string>) {
+		dec.decode_string_utf8(m_value); 
 	}
 	else {
 		m_value = dec.decode<TYPE>(); 
@@ -121,5 +131,6 @@ using opt_uint32_t = dastd::optval<uint32_t>;
 using opt_int32_t = dastd::optval<int32_t>;
 using opt_uint64_t = dastd::optval<uint64_t>;
 using opt_int64_t = dastd::optval<int64_t>;
+using opt_string_t = dastd::optval<std::string>;
 
 } // namespace dastd

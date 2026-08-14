@@ -36,9 +36,8 @@ inline void invert_bytes(void* data, size_t size) {
 /// @tparam NUMTYPE Integral type
 /// @param source The integral value to be inverted
 /// @param target The binary buffer that will host the little endian encoded bytes; it must be at least as big as sizeof(NUMTYPE)
-template<class NUMTYPE>
+template<concept_integral_or_floating NUMTYPE>
 void native_to_little_endian(NUMTYPE source, void* target) {
-	static_assert(std::is_integral<NUMTYPE>::value, "Integral required");
 	#ifdef DASTD_LITTLE_ENDIAN
 	memcpy(target, &source, sizeof(NUMTYPE));
 	#else
@@ -50,9 +49,8 @@ void native_to_little_endian(NUMTYPE source, void* target) {
 /// @tparam NUMTYPE Integral type
 /// @param source The integral value to be inverted
 /// @param target The binary buffer that will host the big endian encoded bytes; it must be at least as big as sizeof(NUMTYPE)
-template<class NUMTYPE>
+template<concept_integral_or_floating NUMTYPE>
 void native_to_big_endian(NUMTYPE source, void* target) {
-	static_assert(std::is_integral<NUMTYPE>::value, "Integral required");
 	#ifdef DASTD_BIG_ENDIAN
 	memcpy(target, &source, sizeof(NUMTYPE));
 	#else
@@ -64,9 +62,8 @@ void native_to_big_endian(NUMTYPE source, void* target) {
 /// @tparam NUMTYPE Integral type
 /// @param source The binary buffer that contains the number in little endian form; it must be at least as big as sizeof(NUMTYPE)
 /// @param target The native value that will receive the decoded value
-template<class NUMTYPE>
+template<concept_integral_or_floating NUMTYPE>
 void little_endian_to_native(const void* source, NUMTYPE& target) {
-	static_assert(std::is_integral<NUMTYPE>::value, "Integral required");
 	#ifdef DASTD_LITTLE_ENDIAN
 	memcpy(&target, source, sizeof(NUMTYPE));
 	#else
@@ -78,9 +75,8 @@ void little_endian_to_native(const void* source, NUMTYPE& target) {
 /// @tparam NUMTYPE Integral type
 /// @param source The binary buffer that contains the number in little endian form; it must be at least as big as sizeof(NUMTYPE)
 /// @param target The native value that will receive the decoded value
-template<class NUMTYPE>
+template<concept_integral_or_floating NUMTYPE>
 void big_endian_to_native(const void* source, NUMTYPE& target) {
-	static_assert(std::is_integral<NUMTYPE>::value, "Integral required");
 	#ifdef DASTD_BIG_ENDIAN
 	memcpy(&target, source, sizeof(NUMTYPE));
 	#else

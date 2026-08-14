@@ -22,9 +22,7 @@ class hash {
 		///
 		/// @param bytes Pointer to the array of raw bytes to be processed
 		/// @param length Number of bytes to be processed
-		///
-		/// @return Returns this hash to allow chaining
-		virtual hash& add_binary(const void* bytes, size_t length) = 0;
+		virtual void add_binary(const void* bytes, size_t length) = 0;
 
 	public:
 		/// @brief reset the hash calculator to its initial state.
@@ -39,13 +37,19 @@ class hash {
 		/// @param length Number of bytes to be processed
 		///
 		/// @return Returns this hash to allow chaining
-		hash& add(const void* bytes, size_t length) {return add_binary(bytes, length);}
+		hash& add(const void* bytes, size_t length) {add_binary(bytes, length); return *this;}
 
 		/// @brief Add a string to the hash
 		/// @param str String to be added
 		/// @return Returns this hash to allow chaining
 		template<class CHARTYPE>
-		hash& add(const std::basic_string<CHARTYPE>& str) {return add(str.c_str(), str.length());}
+		hash& add(const std::basic_string<CHARTYPE>& str) {return add(str.data(), str.length());}
+
+		/// @brief Add a string to the hash
+		/// @param str String to be added
+		/// @return Returns this hash to allow chaining
+		template<class CHARTYPE>
+		hash& add(const std::basic_string_view<CHARTYPE>& str) {return add(str.data(), str.length());}
 
 		/// @brief Adds the indicated charaters to the current hash sum
 		///
@@ -75,44 +79,44 @@ class hash {
 		/// @brief Add a char to the string
 		/// @param num Number to be added
 		/// @return Returns this hash to allow chaining
-		hash& add(char num) {return add_binary(&num, 1);}
+		hash& add(char num) {add_binary(&num, 1); return *this;}
 
 		/// @brief Add a uint8_t to the string
 		/// @param num Number to be added
 		/// @return Returns this hash to allow chaining
-		hash& add(uint8_t num) {return add_binary(&num, 1);}
+		hash& add(uint8_t num) {add_binary(&num, 1); return *this;}
 
 		/// @brief Add a int8_t to the string
 		/// @param num Number to be added
 		/// @return Returns this hash to allow chaining
-		hash& add(int8_t num) {return add_binary(&num, 1);}
+		hash& add(int8_t num) {add_binary(&num, 1); return *this;}
 
-		/// @brief Add a uint16_t to the string
+		/// @brief Add a uint16_t to the string (big-endian)
 		/// @param num Number to be added
 		/// @return Returns this hash to allow chaining
 		hash& add(uint16_t num);
 
-		/// @brief Add a int16_t to the string
+		/// @brief Add a int16_t to the string (big-endian)
 		/// @param num Number to be added
 		/// @return Returns this hash to allow chaining
 		hash& add(int16_t num) {return add((uint16_t)num);}
 
-		/// @brief Add a uint32_t to the string
+		/// @brief Add a uint32_t to the string (big-endian)
 		/// @param num Number to be added
 		/// @return Returns this hash to allow chaining
 		hash& add(uint32_t num);
 
-		/// @brief Add a int32_t to the string
+		/// @brief Add a int32_t to the string (big-endian)
 		/// @param num Number to be added
 		/// @return Returns this hash to allow chaining
 		hash& add(int32_t num) {return add((uint32_t)num);}
 
-		/// @brief Add a uint64_t to the string
+		/// @brief Add a uint64_t to the string (big-endian)
 		/// @param num Number to be added
 		/// @return Returns this hash to allow chaining
 		hash& add(uint64_t num);
 
-		/// @brief Add a int64_t to the string
+		/// @brief Add a int64_t to the string (big-endian)
 		/// @param num Number to be added
 		/// @return Returns this hash to allow chaining
 		hash& add(int64_t num) {return add((uint64_t)num);}
@@ -146,7 +150,7 @@ class hash {
 };
 DASTD_DEF_OSTREAM(hash);
 
-/// @brief adda uint16_t to the string
+/// @brief Add a uint16_t to the string (big-endian)
 /// @param num Number to be added
 /// @return Returns this hash to allow chaining
 inline hash& hash::add(uint16_t num)
@@ -158,7 +162,7 @@ inline hash& hash::add(uint16_t num)
 	return *this;
 }
 
-/// @brief adda uint32_t to the string
+/// @brief Add a uint32_t to the string (big-endian)
 /// @param num Number to be added
 /// @return Returns this hash to allow chaining
 inline hash& hash::add(uint32_t num)
@@ -172,7 +176,7 @@ inline hash& hash::add(uint32_t num)
 	return *this;
 }
 
-/// @brief adda uint64_t to the string
+/// @brief Add a uint64_t to the string (big-endian)
 /// @param num Number to be added
 /// @return Returns this hash to allow chaining
 inline hash& hash::add(uint64_t num)

@@ -36,6 +36,7 @@ namespace dastd {
 	inline marshal_label_id_t marshal_label_info_to_id(marshal_label_info_t label_info) {return (marshal_label_id_t)(label_info & 0xFFFFFFFFULL);}
 	#endif
 
+
 	/// @brief Base class for the marshaling decoder
 	///
 	/// This class provides an interface that allows marshaling basic
@@ -137,6 +138,21 @@ namespace dastd {
 			/// @param field_infos_count Number of elements to be expected in the field_ids array.
 			///
 			/// See @link marshaling_structs documentation @endlink for details and examples.
+			/// 
+			/// The `field_infos` part is to be statically defined. Example:
+			/// 
+			/// 			static constexpr char k_marshal_attr_name_timestamp[] = "timestamp";
+			/// 			static constexpr char k_marshal_attr_name_frame_num[] = "frame_num";
+			/// 			static constexpr char k_marshal_attr_name_center_freq[] = "center_freq";
+			/// 			
+			/// 			static constexpr dastd::marshal_label_info_t k_struct_fields[] = {
+			/// 				dastd::marshal_label_info_calc(k_marshal_attr_name_timestamp, false),
+			/// 				dastd::marshal_label_info_calc(k_marshal_attr_name_frame_num, false),
+			/// 				dastd::marshal_label_info_calc(k_marshal_attr_name_center_freq, false),
+			/// 			};
+			/// 			
+			/// 			static constexpr size_t k_struct_fields_count = sizeof(k_struct_fields)/sizeof(k_struct_fields[0]);
+			/// 
 			virtual void decode_struct_begin(bool extensible, const marshal_label_info_t* field_infos, size_t fields_infos_count) = 0;
 
 			/// @brief Terminate Decoding a structure
@@ -171,6 +187,10 @@ namespace dastd {
 			/// This must be invoked inside a `decode_struct_begin` and `decode_struct_end` pair.
 			/// See @link marshaling_structs documentation @endlink for details and examples.
 			virtual void decode_struct_field_end() = 0;
+
+			/// @brief Decodes and discard an unknown field
+			/// @return Returns `true` if skipped, `false` if this feature is not available
+			virtual bool decode_struct_field_skip() {return false;}
 
 			/// @brief Start decoding an array
 			/// @param count Number of elements that will be decoded

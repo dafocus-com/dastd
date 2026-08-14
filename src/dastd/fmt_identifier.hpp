@@ -29,7 +29,7 @@ class fmt_identifier {
 
 		/// @brief Constructor
 		/// @param string Pointer to a zero-terminated sequence of characters
-		fmt_identifier(const std::basic_string<CHARTYPE>& string): m_chars(string.c_str()), m_chars_len(string.length()) {}
+		fmt_identifier(const std::basic_string_view<CHARTYPE>& string): m_chars(string.data()), m_chars_len(string.length()) {}
 
 		/// @brief Print the formatted value on a ostream
 		///

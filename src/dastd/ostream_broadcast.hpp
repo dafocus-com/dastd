@@ -57,7 +57,7 @@ namespace dastd {
 			/// @return Return `false` in case of error, `true` if ok.
 			virtual bool sync() override;
 
-		private:
+		protected:
 			/// @brief Substream descriptor
 			struct substream {
 				/// @brief Constructor for not-owned stream
@@ -71,6 +71,9 @@ namespace dastd {
 
 				/// @brief Substream smartpointer in case it is owned
 				std::shared_ptr<std::ostream> m_stream_owned;
+
+				/// @brief True if enabled
+				bool m_enabled = true;
 			};
 
 			/// @brief Number of stream ids assigned; used to assign new ids
@@ -82,17 +85,19 @@ namespace dastd {
 
 	// Write one character to the target stream
 	inline void ostream_broadcast::write_char(char_type c) {
-		for (auto & s: m_substreams) {
-			s.second.m_stream->put(c);
+		for (auto & sub: m_substreams) {
+			if (sub.second.m_enabled) sub.second.m_stream->put(c);
 		}
 	}
 
 	// Implementation of the "flush" action
 	inline bool ostream_broadcast::sync() {
 		bool ok = true;
-		for (auto & s: m_substreams) {
-			s.second.m_stream->flush();
-			if (s.second.m_stream->bad()) ok=false;
+		for (auto & sub: m_substreams) {
+			if (sub.second.m_enabled) {
+				sub.second.m_stream->flush();
+				if (sub.second.m_stream->bad()) ok=false;
+			}
 		}
 		return ok;
 	}

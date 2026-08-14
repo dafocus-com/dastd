@@ -8,6 +8,8 @@
 #include "time.hpp"
 #include "ostream_broadcast.hpp"
 #include "thread_affinity.hpp"
+#include "ostream_transacted.hpp"
+#include "ostream_daily_file.hpp"
 #include <thread>
 #include <mutex>
 #include <iostream>
@@ -134,7 +136,15 @@ class ostream_log: public ostream_broadcast {
 
 		/// @brief Set the thread name, to help logging
 		/// @param thread_name Name of the thread; truncated at `k_thread_name_size`
-		static void set_thread_name(const std::string& thread_name);
+		static void set_thread_name(std::string_view thread_name);
+
+		/// @brief Add a daily file
+		/// @param base_file_name Base name for the log file
+		/// @return Returns the stream-id assigned to this stream.
+		/// 
+		/// Create a log file with the indicated name but with a daily timestamp inserted.
+		/// This allows creating one logfile per day.
+		uint32_t add_daily_file(const std::filesystem::path base_file_name);
 
 	protected:
 		/// @brief Write the line header with the timestamp and any other active option
@@ -473,6 +483,23 @@ inline void ostream_log::set_min_log_level(ostream_log_level_t min_log_level)
 inline void ostream_log::begin(ostream_log_level_t log_level, const char* line_evidencer)
 {
 	m_mutex.lock();
+	
+	// Call the `transaction_begin` on the nodes that are derived from `dastd::ostream_transacted`
+	for(auto& substream: m_substreams) {
+		if (substream.second.m_enabled) {
+			ostream_transacted* m_transacted_stream = dynamic_cast<ostream_transacted*>(substream.second.m_stream);
+			if (m_transacted_stream != nullptr) {
+				try {
+					m_transacted_stream->transaction_begin();
+				}
+				catch(const std::exception& e) {
+					std::cout << "[ERROR] ostream_log::begin - Error calling `transaction_begin()`: " << e.what() << std::endl;
+					substream.second.m_enabled = false;
+				}
+			}
+		}
+	}
+
 	m_log_level = log_level;
 	m_line_header_buffer[0] = '\0';
 	m_line_number = 0;
@@ -521,6 +548,15 @@ inline void ostream_log::end(const char* tag)
 	#endif
 	flush();
 	m_line_evidencer.clear();
+
+	// Call the `transaction_end` on the nodes that are derived from `dastd::ostream_transacted`
+	for(auto& substream: m_substreams) {
+		if (substream.second.m_enabled) {
+			ostream_transacted* m_transacted_stream = dynamic_cast<ostream_transacted*>(substream.second.m_stream);
+			if (m_transacted_stream != nullptr) m_transacted_stream->transaction_end();
+		}
+	}
+
 	m_mutex.unlock();
 }
 
@@ -579,13 +615,27 @@ inline void ostream_log::terminate_log_entry_with_newline()
 // (brief) Set the thread name, to help logging
 // (param) thread_name Name of the thread; truncated at `k_thread_name_size`
 //------------------------------------------------------------------------------
-inline void ostream_log::set_thread_name(const std::string& thread_name)
+inline void ostream_log::set_thread_name(std::string_view thread_name)
 {
-	strncpy(g_thread_name, thread_name.c_str(), k_thread_name_size-1);
-	g_thread_name[k_thread_name_size-1] = 0;
+	size_t len = thread_name.size();
+	if (len > k_thread_name_size-1) len = k_thread_name_size-1;
+	memcpy(g_thread_name, thread_name.data(), len);
+	g_thread_name[len] = '\0';
+}
+
+//------------------------------------------------------------------------------
+// (brief) Add a daily file
+// (param) base_file_name Base name for the log file
+// 
+// Create a log file with the indicated name but with a daily timestamp inserted.
+// This allows creating one logfile per day.
+//------------------------------------------------------------------------------
+inline uint32_t ostream_log::add_daily_file(const std::filesystem::path base_file_name)
+{
+	return add_stream_owned(std::make_shared<ostream_daily_file>(base_file_name));
 }
 
 
-
 } // namespace dastd
+
 

@@ -93,25 +93,25 @@ class arg_opt: public std::enable_shared_from_this<arg_opt> {
 		/// @brief Constructor
 		///
 		/// @param name Single or multiple letter argument name (without - or --)
-		arg_opt(const std::string_view& name): m_name(name) {}
+		arg_opt(std::string_view name): m_name(name) {}
 
 		/// @brief Constructor
 		///
 		/// @param name Single or multiple letter argument name (without - or --)
 		/// @param desc Description of the argument, shown in help
-		arg_opt(const std::string_view& name, std::shared_ptr<flooder_ch32> desc): m_name(name), m_desc(desc) {}
+		arg_opt(std::string_view name, std::shared_ptr<flooder_ch32> desc): m_name(name), m_desc(desc) {}
 
 		/// @brief Constructor
 		///
 		/// @param name Single or multiple letter argument name (without - or --)
 		/// @param desc Simple string description of the argument, shown in help
-		arg_opt(const std::string_view& name, const char32_t* desc): m_name(name) {set_desc(desc);}
+		arg_opt(std::string_view name, const char32_t* desc): m_name(name) {set_desc(desc);}
 
 		/// @brief Constructor
 		///
 		/// @param name Single or multiple letter argument name (without - or --)
 		/// @param desc Simple string description of the argument, shown in help
-		arg_opt(const std::string_view& name, const std::string_view& desc): m_name(name) {set_desc(desc);}
+		arg_opt(std::string_view name, std::string_view desc): m_name(name) {set_desc(desc);}
 
 		/// @brief Destructor
 		virtual ~arg_opt() {}
@@ -131,7 +131,7 @@ class arg_opt: public std::enable_shared_from_this<arg_opt> {
 		/// @brief Called by the arg_parser when it is matched.
 		///
 		/// @param value Parameter string; empty if the parameter declared is_parametric()==false.
-		virtual void matched(const std::string_view& value) = 0;
+		virtual void matched(std::string_view value) = 0;
 
 		/// @brief Called by the arg_parser when done to validate the contents
 		///
@@ -171,7 +171,7 @@ class arg_opt: public std::enable_shared_from_this<arg_opt> {
 		void set_desc(const char32_t* desc) {m_desc = std::make_unique<char32string>(desc);}
 
 		/// @brief Set the description with a static string
-		void set_desc(const std::string_view& desc) {m_desc = std::make_unique<char32string>(desc);}
+		void set_desc(std::string_view desc) {m_desc = std::make_unique<char32string>(desc);}
 
 		/// @brief Set the description with a static string
 		void set_desc(const char* desc) {m_desc = std::make_unique<char32string>(desc);}
@@ -182,7 +182,7 @@ class arg_opt: public std::enable_shared_from_this<arg_opt> {
 		/// @brief Add an 'aka', i.e. an alternative form
 		///
 		/// @return Returns 'this'
-		arg_opt& add_aka(const std::string_view& name);
+		arg_opt& add_aka(std::string_view name);
 
 		/// @brief Print the help containing it in the given number of columns
 		///
@@ -226,30 +226,30 @@ class arg_opt_flag: public arg_opt {
 		/// @brief Constructor
 		///
 		/// @param name Single or multiple letter argument name (without - or --)
-		arg_opt_flag(const std::string_view& name): arg_opt(name) {}
+		arg_opt_flag(std::string_view name): arg_opt(name) {}
 
 		/// @brief Constructor
 		///
 		/// @param name Single or multiple letter argument name (without - or --)
 		/// @param desc Description of the argument, shown in help
-		arg_opt_flag(const std::string_view& name, std::shared_ptr<flooder_ch32> desc): arg_opt(name, desc) {}
+		arg_opt_flag(std::string_view name, std::shared_ptr<flooder_ch32> desc): arg_opt(name, desc) {}
 
 		/// @brief Constructor
 		///
 		/// @param name Single or multiple letter argument name (without - or --)
 		/// @param desc Simple string description of the argument, shown in help
-		arg_opt_flag(const std::string_view& name, const char32_t* desc): arg_opt(name, desc) {}
+		arg_opt_flag(std::string_view name, const char32_t* desc): arg_opt(name, desc) {}
 
 		/// @brief Constructor
 		///
 		/// @param name Single or multiple letter argument name (without - or --)
 		/// @param desc Simple string description of the argument, shown in help
-		arg_opt_flag(const std::string_view& name, const std::string_view& desc): arg_opt(name, desc) {}
+		arg_opt_flag(std::string_view name, std::string_view desc): arg_opt(name, desc) {}
 
 		/// @brief Add an 'aka', i.e. an alternative form
 		///
 		/// @return Returns 'this'
-		arg_opt_flag& add_aka(const std::string_view& name) {arg_opt::add_aka(name); return *this;}
+		arg_opt_flag& add_aka(std::string_view name) {arg_opt::add_aka(name); return *this;}
 
 		/// @brief Reset to defaults
 		virtual void reset() {m_count = 0;}
@@ -266,7 +266,7 @@ class arg_opt_flag: public arg_opt {
 		/// @brief Called by the arg_parser when it is matched.
 		///
 		/// @param param Parameter string; empty if the parameter declared is_parametric()==false.
-		virtual void matched(const std::string_view&) {m_count++;}
+		virtual void matched(std::string_view) {m_count++;}
 
 		/// @brief Print the option debug data
 		virtual void print_debug_data(sink_ch32& out) const;
@@ -302,30 +302,30 @@ class arg_opt_value: public arg_opt {
 		/// @brief Constructor
 		///
 		/// @param name Single or multiple letter argument name (without - or --)
-		arg_opt_value(const std::string_view& name): arg_opt(name) {}
+		arg_opt_value(std::string_view name): arg_opt(name) {}
 
 		/// @brief Constructor
 		///
 		/// @param name Single or multiple letter argument name (without - or --)
 		/// @param desc Description of the argument, shown in help
-		arg_opt_value(const std::string_view& name, std::shared_ptr<flooder_ch32> desc): arg_opt(name, desc) {}
+		arg_opt_value(std::string_view name, std::shared_ptr<flooder_ch32> desc): arg_opt(name, desc) {}
 
 		/// @brief Constructor
 		///
 		/// @param name Single or multiple letter argument name (without - or --)
 		/// @param desc Simple string description of the argument, shown in help
-		arg_opt_value(const std::string_view& name, const char32_t* desc): arg_opt(name, desc) {}
+		arg_opt_value(std::string_view name, const char32_t* desc): arg_opt(name, desc) {}
 
 		/// @brief Constructor
 		///
 		/// @param name Single or multiple letter argument name (without - or --)
 		/// @param desc Simple string description of the argument, shown in help
-		arg_opt_value(const std::string_view& name, const std::string_view& desc): arg_opt(name, desc) {}
+		arg_opt_value(std::string_view name, std::string_view desc): arg_opt(name, desc) {}
 
 		/// @brief Add an 'aka', i.e. an alternative form
 		///
 		/// @return Returns 'this'
-		arg_opt_value& add_aka(const std::string_view& name) {arg_opt::add_aka(name); return *this;}
+		arg_opt_value& add_aka(std::string_view name) {arg_opt::add_aka(name); return *this;}
 
 		/// @brief Reset to defaults
 		virtual void reset() {m_values.clear();}
@@ -336,7 +336,7 @@ class arg_opt_value: public arg_opt {
 		/// @brief Called by the arg_parser when it is matched.
 		///
 		/// @param value Parameter string; empty if the parameter declared is_parametric()==false.
-		virtual void matched(const std::string_view& value) {m_values.emplace_back(value);}
+		virtual void matched(std::string_view value) {m_values.emplace_back(value);}
 
 		/// @brief Print the parameters after the option
 		///
@@ -373,7 +373,7 @@ class arg_opt_value: public arg_opt {
 		uint32_t count() const {return (uint32_t)m_values.size();}
 
 		/// @brief Set the value placemark instead of the default "<v>" string
-		void set_value_placemark(const std::string_view& value_placemark) {m_value_placemark = value_placemark;}
+		void set_value_placemark(std::string_view value_placemark) {m_value_placemark = value_placemark;}
 
 		/// @brief Set an optval<NUMTYPE> to true if the parameter is present
 		void set(std::string& tgt) const {if (count()>0) tgt = str(0);}
@@ -402,25 +402,25 @@ class arg_opt_value_integral: public arg_opt_value {
 		/// @brief Constructor
 		///
 		/// @param name Single or multiple letter argument name (without - or --)
-		arg_opt_value_integral(const std::string_view& name): arg_opt_value(name) {init_value_integral();}
+		arg_opt_value_integral(std::string_view name): arg_opt_value(name) {init_value_integral();}
 
 		/// @brief Constructor
 		///
 		/// @param name Single or multiple letter argument name (without - or --)
 		/// @param desc Description of the argument, shown in help
-		arg_opt_value_integral(const std::string_view& name, std::shared_ptr<flooder_ch32> desc): arg_opt_value(name, desc) {init_value_integral();}
+		arg_opt_value_integral(std::string_view name, std::shared_ptr<flooder_ch32> desc): arg_opt_value(name, desc) {init_value_integral();}
 
 		/// @brief Constructor
 		///
 		/// @param name Single or multiple letter argument name (without - or --)
 		/// @param desc Simple string description of the argument, shown in help
-		arg_opt_value_integral(const std::string_view& name, const char32_t* desc): arg_opt_value(name, desc) {init_value_integral();}
+		arg_opt_value_integral(std::string_view name, const char32_t* desc): arg_opt_value(name, desc) {init_value_integral();}
 
 		/// @brief Constructor
 		///
 		/// @param name Single or multiple letter argument name (without - or --)
 		/// @param desc Simple string description of the argument, shown in help
-		arg_opt_value_integral(const std::string_view& name, const std::string_view& desc): arg_opt_value(name, desc) {init_value_integral();}
+		arg_opt_value_integral(std::string_view name, std::string_view desc): arg_opt_value(name, desc) {init_value_integral();}
 
 		/// @brief Add a validation function
 		void add_validation(validation_function f) {arg_opt_value::add_validation(f);}
@@ -448,25 +448,25 @@ class arg_opt_value_double: public arg_opt_value {
 		/// @brief Constructor
 		///
 		/// @param name Single or multiple letter argument name (without - or --)
-		arg_opt_value_double(const std::string_view& name): arg_opt_value(name) {init_value_double();}
+		arg_opt_value_double(std::string_view name): arg_opt_value(name) {init_value_double();}
 
 		/// @brief Constructor
 		///
 		/// @param name Single or multiple letter argument name (without - or --)
 		/// @param desc Description of the argument, shown in help
-		arg_opt_value_double(const std::string_view& name, std::shared_ptr<flooder_ch32> desc): arg_opt_value(name, desc) {init_value_double();}
+		arg_opt_value_double(std::string_view name, std::shared_ptr<flooder_ch32> desc): arg_opt_value(name, desc) {init_value_double();}
 
 		/// @brief Constructor
 		///
 		/// @param name Single or multiple letter argument name (without - or --)
 		/// @param desc Simple string description of the argument, shown in help
-		arg_opt_value_double(const std::string_view& name, const char32_t* desc): arg_opt_value(name, desc) {init_value_double();}
+		arg_opt_value_double(std::string_view name, const char32_t* desc): arg_opt_value(name, desc) {init_value_double();}
 
 		/// @brief Constructor
 		///
 		/// @param name Single or multiple letter argument name (without - or --)
 		/// @param desc Simple string description of the argument, shown in help
-		arg_opt_value_double(const std::string_view& name, const std::string_view& desc): arg_opt_value(name, desc) {init_value_double();}
+		arg_opt_value_double(std::string_view name, std::string_view desc): arg_opt_value(name, desc) {init_value_double();}
 
 		/// @brief Add a validation function
 		arg_opt_value_double& add_validation(validation_function f) {arg_opt_value::add_validation(f); return *this;}
@@ -495,7 +495,7 @@ class arg_opt_aka: public arg_opt {
 		/// Can be instanced only by the 'add_aka` method.
 		///
 		/// @param name Single or multiple letter argument name (without - or --)
-		arg_opt_aka(const std::string_view& name, std::weak_ptr<arg_opt> master_opt): arg_opt(name), m_master_opt(master_opt) {}
+		arg_opt_aka(std::string_view name, std::weak_ptr<arg_opt> master_opt): arg_opt(name), m_master_opt(master_opt) {}
 
 		/// @brief Returns true if requires a parameter
 		virtual bool is_parametric() const {return m_master_opt.lock()->is_parametric();}
@@ -506,7 +506,7 @@ class arg_opt_aka: public arg_opt {
 		/// @brief Called by the arg_parser when it is matched.
 		///
 		/// @param param Parameter string; empty if the parameter declared is_parametric()==false.
-		virtual void matched(const std::string_view& val) {m_master_opt.lock()->matched(val);}
+		virtual void matched(std::string_view val) {m_master_opt.lock()->matched(val);}
 
 		/// @brief Print the option debug data
 		virtual void print_debug_data(sink_ch32& out) const {m_master_opt.lock()->print_debug_data(out);}
@@ -557,7 +557,7 @@ class args_parser: public std::enable_shared_from_this<args_parser> {
 		void print_debug_data(sink_ch32& out) const;
 
 		/// @brief Called when an option is unknown to report an error
-		virtual void error_invalid_option(const std::string_view& opt);
+		virtual void error_invalid_option(std::string_view opt);
 
 		/// @brief Called when a parametric option is missing the value
 		virtual void error_missing_value(const arg_opt& arg);
@@ -808,7 +808,7 @@ inline void arg_opt::print_options_help(sink_ch32& sink, uint32_t columns, uint3
 }
 
 // Add an 'aka', i.e. an alternative form
-inline arg_opt& arg_opt::add_aka(const std::string_view& name)
+inline arg_opt& arg_opt::add_aka(std::string_view name)
 {
 	auto pars = parser();
 	assert(pars);
@@ -901,7 +901,7 @@ inline bool args_parser::execute()
 	std::string name;
 
 	for (i=0; i<m_args_vals.size(); i++) {
-		const std::string_view& arg = m_args_vals[i];
+		std::string_view arg = m_args_vals[i];
 
 		if (m_double_dash) {
 			m_non_options.emplace_back(arg);
@@ -1030,7 +1030,7 @@ inline void args_parser::print_options_help(std::ostream& out, uint32_t columns,
 #endif
 
 // Called when an option is unknown to report an error
-inline void args_parser::error_invalid_option(const std::string_view& opt)
+inline void args_parser::error_invalid_option(std::string_view opt)
 {
 	char32parametric c32p(get_message(sid_error_invalid_option));
 	c32p.set_param(0) << opt;

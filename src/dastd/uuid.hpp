@@ -9,11 +9,12 @@
 #include <cstdint>
 #include <compare>
 #include <cassert>
-#include <string_view>
+#include <string>
 #include <array>
 #include "fmt.hpp"
 #include "hex_parse.hpp"
 #include "random.hpp"
+#include "sink_byte.hpp"
 
 namespace dastd {
 
@@ -69,13 +70,16 @@ class uuid {
 		/// @brief Parse the given "8-4-4-4-12" string
 		///
 		/// In case of error, this object will be `is_nil()`
-		constexpr uuid(const std::string_view& str) {parse(str);}
+		constexpr uuid(std::string_view str) {parse(str);}
 
 		/// @brief Constructor from a binary array
 		uuid(const array_t& buffer) {set_binary(buffer);}
 
 		/// @brief Generate a random UUID
 		void set_random();
+
+		/// @brief Generate a random UUID
+		static uuid get_random() {uuid u; u.set_random(); return u;}
 
 		/// @brief Operator=
 		constexpr uuid& operator=(const uuid& o) {m_value.m_ml.m_lsb=o.m_value.m_ml.m_lsb; m_value.m_ml.m_msb=o.m_value.m_ml.m_msb; return *this;}
@@ -142,7 +146,11 @@ class uuid {
 		/// @brief Parse the given "8-4-4-4-12" string
 		/// @param str String to be parsed
 		/// @return Returns `true` if ok, `false` in case of error
-		bool constexpr parse(const std::string_view& str);
+		bool constexpr parse(std::string_view str);
+
+		/// @brief Write the UUID to the byte sink
+		/// @param sink The target sink
+		void write_to_sink(sink_byte& sink) const;
 };
 
 DASTD_DEF_OSTREAM(uuid)
@@ -179,7 +187,7 @@ inline constexpr void uuid::set_byte(size_t pos, uint8_t value)
 }
 
 // Parse the given "8-4-4-4-12" string
-inline constexpr bool uuid::parse(const std::string_view& str)
+inline constexpr bool uuid::parse(std::string_view str)
 {
 	if (str.size() < ENCODED_LEN) {clear(); return false;}
 	size_t inp;
@@ -221,5 +229,13 @@ inline void uuid::set_random()
 	m_value.m_bytes[0] |= 0x80;
 }
 
+
+// Write the UUID to the byte sink
+inline void uuid::write_to_sink(sink_byte& sink) const
+{
+	for(size_t i=0; i<UUID_LEN_IN_BYTES; i++) {
+		sink.write_byte(get_byte(i));
+	}
+}
 
 } // namespace dastd

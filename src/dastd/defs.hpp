@@ -47,6 +47,7 @@ static_assert(DASTD_CPP_VER >= 20);
 
 
 #define DASTD_DEF_OSTREAM(t) inline std::ostream& operator<< (std::ostream& o, const t& n) {n.print(o); return o;}
+#define DASTD_DEF_OSTREAM_SHARED_PTR(t) inline std::ostream& operator<< (std::ostream& o, std::shared_ptr<const t> n) {if (n) n->print(o); else o << "nullptr"; return o;}
 #define DASTD_NUMCMP(a,b) ((a)<(b)?-1:((a)==(b)?0:1))
 
 
@@ -214,6 +215,10 @@ inline constexpr bool is_instance_of_v<T<Vs...>,T> = std::true_type{};
 /// @brief Concept for integral types
 template <class T>
 concept concept_integral = std::is_integral_v<T>;
+
+/// @brief Concept for integral types or floating point
+template <class T>
+concept concept_integral_or_floating = std::is_integral_v<T> || std::is_floating_point_v<T>;
 
 /// @brief Concept for integral unsigned types
 template <class T>

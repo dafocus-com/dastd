@@ -36,6 +36,9 @@ namespace fmt_string_f {
 	/// @brief In SIMPLE_ESCAPED, it does not print double quotes but it prints their hex representation
 	static constexpr fmt_string_format_t SIMPLE_ESC_DOUBLE_QUOTES_AS_HEX = 0x00000400;
 
+	/// @brief When printing C strings with autorequote, after a new line it will close the quote and reopen it on the following line
+	static constexpr fmt_string_format_t NEWLINES_ON_NEW_LINES = 0x00000800;
+
 	/// @brief Main settings
 	static constexpr fmt_string_format_t UTF8                            = 1; ///< Writes the binary UTF-8 encoding
 	static constexpr fmt_string_format_t C11_ESCAPED                     = 2; ///< Writes a C++11 string with escapes (\x, \u and \U, plus the usual \0, \r, \n, etc.)
@@ -45,6 +48,7 @@ namespace fmt_string_f {
 
 	static constexpr fmt_string_format_t C11_ESCAPED_QUOTED              = C11_ESCAPED|WITHIN_DOUBLE_QUOTES; ///< Writes a C++11 string with escapes (\x, \u and \U, plus the usual \0, \r, \n, etc.) surrounded by double quotes
 	static constexpr fmt_string_format_t C11_ESCAPED_AUTOREQUOTE_QUOTED  = C11_ESCAPED_AUTOREQUOTE|WITHIN_DOUBLE_QUOTES; ///< Same as C11_ESCAPED but it adds a close/reopen double quotes pair in case of ambiguous sequence surrounded by double quotes
+	static constexpr fmt_string_format_t C11_ESCAPED_AUTOREQUOTE_QUOTED_NL  = C11_ESCAPED_AUTOREQUOTE|WITHIN_DOUBLE_QUOTES|NEWLINES_ON_NEW_LINES; ///< Same as C11_ESCAPED but it adds a close/reopen double quotes pair in case of ambiguous sequence surrounded by double quotes
 	static constexpr fmt_string_format_t SIMPLE_ESCAPED_QUOTED           = SIMPLE_ESCAPED|WITHIN_DOUBLE_QUOTES|SIMPLE_ESC_DOUBLE_QUOTES_AS_HEX; ///< Same as C11_ESCAPED but it adds a close/reopen double quotes pair in case of ambiguous sequence surrounded by double quotes
 
 	static constexpr fmt_string_format_t FMT_DEFAULT = C11_ESCAPED;

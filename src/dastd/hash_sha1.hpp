@@ -73,7 +73,7 @@ class hash_sha1: public hash {
 		/// @param length Number of bytes to be processed
 		///
 		/// @return Returns this hash to allow chaining
-		virtual hash& add_binary(const void* bytes, size_t length) override {m_sha1_state.add_binary(bytes, length); return *this;}
+		virtual void add_binary(const void* bytes, size_t length) override {m_sha1_state.add_binary(bytes, length);}
 
 	public:
 		/// @brief Size of the SHA-1 digest

@@ -39,7 +39,7 @@ class sink_ch32_html: public sink_ch32 {
 		///
 		/// @param target Stream that will receive the actual output
 		/// @param last_wasEOL If true, it will start immediately with an indent; otherwise, the first line will not receive the indent.
-		sink_ch32_html(std::ostream& target, const std::string_view& newline="\n"): m_target(target), m_newline(newline) {}
+		sink_ch32_html(std::ostream& target, std::string_view newline="\n"): m_target(target), m_newline(newline) {}
 
 	protected:
 		/// @brief Put one char32_t character in the sink

@@ -77,12 +77,12 @@ namespace dastd {
 			/// @brief Write a UTF-8 encoded std::string in the sink
 			///
 			/// @param str Zero terminated UTF-8 string.
-			void sink_write(const std::string_view& str) {sink_write(str.data(), str.size());}
+			void sink_write(std::string_view str) {sink_write(str.data(), str.size());}
 
 			/// @brief Write a UTF-32 encoded std::string in the sink
 			///
 			/// @param u32str UTF-32 string.
-			void sink_write(const std::u32string_view& u32str) {sink_write(u32str.data(), u32str.length());}
+			void sink_write(std::u32string_view u32str) {sink_write(u32str.data(), u32str.length());}
 
 			/// @brief Write a UTF-8 encoded std::string in the sink
 			///

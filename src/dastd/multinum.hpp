@@ -63,8 +63,8 @@ class multinum {
 		/// @brief Assign operator
 		multinum& operator=(const multinum& o);
 
-		/// @brief Constructor with int64_t value
-		template<class NUMERIC>
+		/// @brief Constructor with numeric value
+		template<concept_integral_or_floating NUMERIC>
 		multinum(NUMERIC v) {set<NUMERIC>(v);}
 
 		/// @brief Clear to zero
@@ -101,13 +101,13 @@ class multinum {
 		/// @param min_value Minimum allowed value
 		/// @param max_value Minimum allowed value
 		/// @return Returns a pair where `first` is the value and `second` is `true` if the value is valid.
-		template<class NUMTYPE>
+		template<concept_integral_or_floating NUMTYPE>
 		std::pair<NUMTYPE,bool> get(NUMTYPE min_value=std::numeric_limits<NUMTYPE>::lowest(), NUMTYPE max_value=std::numeric_limits<NUMTYPE>::max()) const;
 
 		/// @brief Set the internal value starting from any numeric value
 		/// @tparam NUMTYPE A valid integral or floating numtype
 		/// @param val
-		template<class NUMTYPE>
+		template<concept_integral_or_floating NUMTYPE>
 		void set(NUMTYPE val);
 };
 
@@ -223,7 +223,7 @@ inline void multinum::internal_parse(std::string& text)
 // (param) max_value Minimum allowed value
 // (return) Returns a pair where `first` is the value and `second` is `true` if the value is valid.
 //------------------------------------------------------------------------------
-template<class NUMTYPE>
+template<concept_integral_or_floating NUMTYPE>
 std::pair<NUMTYPE,bool> multinum::get(NUMTYPE min_value, NUMTYPE max_value) const
 {
 	std::pair<NUMTYPE,bool> invalid((NUMTYPE)0,false);
@@ -284,7 +284,7 @@ std::pair<NUMTYPE,bool> multinum::get(NUMTYPE min_value, NUMTYPE max_value) cons
 // (tparam) NUMTYPE A valid integral or floating numtype
 // (param) val
 //------------------------------------------------------------------------------
-template<class NUMTYPE>
+template<concept_integral_or_floating NUMTYPE>
 void multinum::set(NUMTYPE val)
 {
 	static_assert(std::is_floating_point_v<NUMTYPE> || (std::is_integral_v<NUMTYPE> && (sizeof(NUMTYPE) <= sizeof(uint64_t))), "Invalid conversion type: must be a floating point or an integral value of a maximum size of 64 bits");

@@ -49,13 +49,13 @@ class pad_string {
 		pad_string(const char* text, size_t width, uint32_t align=pad_string_align::LEFT, char32_t padding_char=' '): m_width(width), m_align(align), m_padding_char(padding_char) {write_utf8_to_u32string(text, strlen(text), m_text);}
 
 		/// @brief Constructor
-		pad_string(const std::string_view& text, size_t width, uint32_t align=pad_string_align::LEFT, char32_t padding_char=' '): m_width(width), m_align(align), m_padding_char(padding_char) {write_utf8_to_u32string(text.data(), text.size(), m_text);}
+		pad_string(std::string_view text, size_t width, uint32_t align=pad_string_align::LEFT, char32_t padding_char=' '): m_width(width), m_align(align), m_padding_char(padding_char) {write_utf8_to_u32string(text.data(), text.size(), m_text);}
 
 		/// @brief Constructor
 		pad_string(const char32_t* text, size_t width, uint32_t align=pad_string_align::LEFT, char32_t padding_char=' '): m_text(text), m_width(width), m_align(align), m_padding_char(padding_char) {}
 
 		/// @brief Constructor
-		pad_string(const std::u32string_view& text, size_t width, uint32_t align=pad_string_align::LEFT, char32_t padding_char=' '): m_text(text), m_width(width), m_align(align), m_padding_char(padding_char) {}
+		pad_string(std::u32string_view text, size_t width, uint32_t align=pad_string_align::LEFT, char32_t padding_char=' '): m_text(text), m_width(width), m_align(align), m_padding_char(padding_char) {}
 
 		// Print the contents (UTF-8)
 		void print(std::ostream& o) const {sink_ch32_ostream<fmt_string_f::UTF8>out(o); print(out);}

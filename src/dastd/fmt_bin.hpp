@@ -42,7 +42,7 @@ class fmt_bin {
 		/// @param s String to be printed
 		/// @param format See @ref fmt_bin_format
 		/// @param truncate_at Truncates the binary data if longer than `truncate_at` bytes
-		fmt_bin(const std::string_view& s, fmt_bin_format format=fmt_bin_format::HEX_DUMP, size_t truncate_at = std::numeric_limits<size_t>::max()): m_format(format), m_truncate_at(truncate_at) {m_ptr = s.data(); m_len=s.length();}
+		fmt_bin(std::string_view s, fmt_bin_format format=fmt_bin_format::HEX_DUMP, size_t truncate_at = std::numeric_limits<size_t>::max()): m_format(format), m_truncate_at(truncate_at) {m_ptr = s.data(); m_len=s.length();}
 
 		/// @brief Constructor
 		/// @param s Vector to be printed

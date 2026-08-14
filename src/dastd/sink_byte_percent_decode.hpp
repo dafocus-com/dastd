@@ -48,7 +48,7 @@ class sink_byte_percent_decode: public sink_byte_by_char {
 /// @param encoded Percent encoded string to be decodied
 /// @return Returns the decoded string
 /// @throw Throws a std::exception in case of error
-inline std::string percent_decode(const std::string_view& encoded)
+inline std::string percent_decode(std::string_view encoded)
 {
 	std::ostringstream ret;
 	sink_byte_percent_decode decoder(ret);

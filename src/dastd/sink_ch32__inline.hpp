@@ -11,7 +11,7 @@ namespace dastd {
 
 	inline sink_ch32& operator<<(sink_ch32& sink, char32_t d) {sink.sink_write(d); return sink;}
 	inline sink_ch32& operator<<(sink_ch32& sink, const char32_t* d) {sink.sink_write(d, std::char_traits<char32_t>::length(d)); return sink;}
-	inline sink_ch32& operator<<(sink_ch32& sink, const std::u32string_view& d) {sink.sink_write(d); return sink;}
+	inline sink_ch32& operator<<(sink_ch32& sink, std::u32string_view d) {sink.sink_write(d); return sink;}
 	inline sink_ch32& operator<<(sink_ch32& sink, const std::u32string& d) {sink.sink_write(d); return sink;}
 	inline sink_ch32& operator<<(sink_ch32& sink, char c) {sink.sink_write((char32_t)c); return sink;}
 	char32sink_DECLOP(double);
@@ -23,7 +23,7 @@ namespace dastd {
 	char32sink_DECLOP(int16_t);
 	char32sink_DECLOP(uint8_t);
 	char32sink_DECLOP(const char*);
-	char32sink_DECLOP(const std::string_view&);
+	char32sink_DECLOP(std::string_view);
 	char32sink_DECLOP(const std::string&);
 
 	#define DASTD_DEF_WRITE_TO_SINK(t) inline dastd::sink_ch32& operator<< (dastd::sink_ch32& o, const t& n) {n.write_to_sink(o); return o;}

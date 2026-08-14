@@ -44,7 +44,7 @@ class sink_byte: public ostream_basic {
 		/// @param offset    First character of the string to be written
 		/// @param length    Maximum number of characters to write (do not exceed the string)
 		/// @throw           It can throw a std::exception or one of its derivatives
-		void sink_write(const std::string_view& data, size_t offset=0, size_t length=SIZE_MAX);
+		void sink_write(std::string_view data, size_t offset=0, size_t length=SIZE_MAX);
 
 		/// @brief Write one character to the target stream
 		virtual void write_char(char_type c) override {sink_write(&c, 1);}
@@ -78,7 +78,7 @@ class sink_byte: public ostream_basic {
 // (param) length    Maximum number of characters to write (do not exceed the string)
 // (throw)           It can throw a std::exception or one of its derivatives
 //------------------------------------------------------------------------------
-inline void sink_byte::sink_write(const std::string_view& data, size_t offset, size_t length)
+inline void sink_byte::sink_write(std::string_view data, size_t offset, size_t length)
 {
 	if (offset >= data.size()) return;
 	size_t maxlen = data.size()-offset;

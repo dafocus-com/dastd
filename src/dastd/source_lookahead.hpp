@@ -4,7 +4,7 @@
 * @date 09-APR-2024
 **/
 #pragma once
-#include "source_with_peek.hpp"
+#include "source.hpp"
 
 namespace dastd {
 
@@ -16,7 +16,7 @@ namespace dastd {
 template<class CHARTYPE, size_t LOOKAHEAD> class source_lookahead: public source<CHARTYPE> {
 	public:
 		/// @brief Constructor
-		source_lookahead(source_with_peek<CHARTYPE>& source);
+		source_lookahead(source<CHARTYPE>& source);
 
 		/// @brief Non-blocking method to read data from the source
 		///
@@ -61,7 +61,7 @@ template<class CHARTYPE, size_t LOOKAHEAD> class source_lookahead: public source
 
 	private:
 		/// @brief Data source
-		source_with_peek<CHARTYPE>& m_source;
+		source<CHARTYPE>& m_source;
 
 		/// @brief Lookahead buffer
 		CHARTYPE m_look_ahead_buffer[LOOKAHEAD];
@@ -78,7 +78,7 @@ template<class CHARTYPE, size_t LOOKAHEAD> class source_lookahead: public source
 // Constructor
 //------------------------------------------------------------------------------
 template<class CHARTYPE, size_t LOOKAHEAD>
-source_lookahead<CHARTYPE, LOOKAHEAD>::source_lookahead(source_with_peek<CHARTYPE>& source): m_source(source)
+source_lookahead<CHARTYPE, LOOKAHEAD>::source_lookahead(source<CHARTYPE>& source): m_source(source)
 {
 	static_assert(LOOKAHEAD > 0);
 }

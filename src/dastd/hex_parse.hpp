@@ -29,6 +29,8 @@ inline constexpr uint8_t hex_char(CHARTYPE ch)
 ///
 /// It automatically skips spaces, tabs, CRs and newlines.
 ///
+/// @param src String containing the hex string
+/// @param bytes The decoded bytes
 /// @return Returns the number of characters read from `src` before stopping because `src` terminated or
 ///         an invalid character has been found.
 template<class CHARTYPE>
@@ -65,7 +67,12 @@ inline size_t hex_parse(source_with_peek<CHARTYPE>& src, std::vector<uint8_t>& b
 	return count;
 }
 
-inline size_t hex_parse(const std::string& src, std::vector<uint8_t>& bytes)
+/// @brief Decode a string made of [0-9A-Fa-f] 
+/// @param src String containing the hex string
+/// @param bytes The decoded bytes
+/// @return Returns the number of characters read from `src` before stopping because `src` terminated or
+///         an invalid character has been found.
+inline size_t hex_parse(std::string_view src, std::vector<uint8_t>& bytes)
 {
 	dastd::string_or_vector<char> sov(src);
 	dastd::source_string_or_vector<char> inp(sov);

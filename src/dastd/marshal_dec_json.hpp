@@ -18,9 +18,7 @@ namespace dastd {
 
 /// @brief Binary little-endian marshaling decoder
 ///
-/// Decodes binary data using the binary little-endian encoding.
-/// See @link marshaling_json_format "Marshaling binary format" @endlink
-/// for details on the binary encoding format.
+/// Decodes binary data using JSON.
 ///
 /// @tparam CHARTYPE     Type of the character handled; usually `char`
 ///                      or `char32_t` but it can be any type compatible
@@ -75,6 +73,9 @@ class marshal_dec_json: public marshal_dec {
 		/// @brief Set to true if the decoder decoded a type structure in case of `TYPEID_AS_STRUCT_FIELD`
 		bool m_is_typed = false;
 
+		/// @brief Enables "relaxed" decoding.
+		bool m_relaxed = true;
+
 		/// @brief Request to resubmit the previous token
 		///
 		/// The previous token can be resubmitted only once
@@ -96,8 +97,13 @@ class marshal_dec_json: public marshal_dec {
 		///                     remain available and unchanged until the parsing has terminated.
 		/// @param polymorphic_encoding   See @ref marshal_json_polymorphic_encoding
 		/// @param typed_field            Name of the field in case of `TYPEID_AS_STRUCT_FIELD`; see @ref marshal_json_polymorphic_encoding
-		marshal_dec_json(source_with_peek<CHARTYPE>& source, marshal_json_polymorphic_encoding polymorphic_encoding=marshal_json_polymorphic_encoding::TYPEID_AS_FIELD_NAME, const std::string& typed_field="$type"):
+		marshal_dec_json(json_tokenizer_source<CHARTYPE>& source, marshal_json_polymorphic_encoding polymorphic_encoding=marshal_json_polymorphic_encoding::TYPEID_AS_FIELD_NAME, const std::string& typed_field="$type"):
 			m_tokenizer(source), m_polymorphic_encoding(polymorphic_encoding), m_typed_field(typed_field) {}
+
+		/// @brief Enables or disables "relaxed" decoding.
+		///
+		/// Enabled by default. With `relaxed` decoding, commas are ignored.
+		void set_relaxed(bool relaxed) {m_relaxed = relaxed;}
 
 		/// @brief Decode a bool
 		/// @return Return the decoded data
@@ -204,6 +210,10 @@ class marshal_dec_json: public marshal_dec {
 		/// This must be invoked inside a `decode_struct_begin` and `decode_struct_end` pair.
 		/// See @link marshaling_structs documentation @endlink for details and examples.
 		virtual void decode_struct_field_end() override;
+
+		/// @brief Decodes and discard an unknown field
+		/// @return Returns `true` if skipped, `false` if this feature is not available
+		virtual bool decode_struct_field_skip() override;
 
 		/// @brief Start decoding an array
 		/// @param count Number of elements that will be decoded
@@ -320,7 +330,11 @@ template<class CHARTYPE, class DECOPRINTER>
 inline void marshal_dec_json<CHARTYPE, DECOPRINTER>::fetch_token()
 {
 	if (m_resubmit_prev_token) {m_resubmit_prev_token=false; return;}
-	m_tokenizer.fetch_token();
+	for (;;) {
+		m_tokenizer.fetch_token();
+		// If relaxed, commas are ignored
+		if (!m_relaxed || (m_tokenizer.get_last_process_ret() != json_tokenizer_ret::C_COMMA)) break;
+	}
 }
 
 // Decode a bool
@@ -405,7 +419,9 @@ inline uint32_t marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_u32(uint32_t sug
 	assert(!m_is_typed);
 	fetch_token();
 	auto pair = m_tokenizer.get_multinum().template get<uint32_t>();
-	if (!pair.second) DASTD_THROW(exception_marshal, "marshal_dec_json::decode_u32: expected u32, got " << DECOPRINTER(m_tokenizer.get_raw_token()));
+	if (!pair.second){
+		DASTD_THROW(exception_marshal, "marshal_dec_json::decode_u32: expected u32, got " << DECOPRINTER(m_tokenizer.get_raw_token()));
+	}
 	return pair.first;
 }
 
@@ -572,9 +588,11 @@ marshal_label_id_t marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_struct_field_
 	}
 
 	// If this is not the first field, there must be a comma
-	if (cur_stack.m_items_count > 0) {
-		if (m_tokenizer.get_last_process_ret() != json_tokenizer_ret::C_COMMA) DASTD_THROW(exception_marshal, "marshal_dec_json::decode_struct_field_begin: expected ',' but got result " << m_tokenizer.get_last_process_ret() << " " << DECOPRINTER(m_tokenizer.get_raw_token()));
-		fetch_token();
+	if (!m_relaxed) {
+		if (cur_stack.m_items_count > 0) {
+			if (m_tokenizer.get_last_process_ret() != json_tokenizer_ret::C_COMMA) DASTD_THROW(exception_marshal, "marshal_dec_json::decode_struct_field_begin: expected ',' but got result " << m_tokenizer.get_last_process_ret() << " " << DECOPRINTER(m_tokenizer.get_raw_token()));
+			fetch_token();
+		}
 	}
 	cur_stack.m_items_count++;
 
@@ -620,6 +638,20 @@ inline void marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_struct_field_end()
 	if (cur_stack.m_element_type != marshal_json_element_type::FIELD) DASTD_THROW(exception_marshal, "Invoked decode_struct_field_end without being inside a FIELD but inside a " << cur_stack.m_element_type);
 
 	m_stack.pop();
+}
+
+// Terminate decoding a field within a structure
+template<class CHARTYPE, class DECOPRINTER>
+inline bool marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_struct_field_skip()
+{
+	fetch_token();
+	switch(m_tokenizer.get_last_process_ret()) {
+		case json_tokenizer_ret::C_BRACKET_OPEN: 
+		case json_tokenizer_ret::C_BRACE_OPEN: skip_substructure(); break;
+		default:;
+	}
+	
+	return true;
 }
 
 // Start decoding an array
@@ -671,8 +703,13 @@ inline bool marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_array_element_begin(
 	}
 
 	// If this is not the first field, there must be a comma
-	if (cur_stack.m_items_count > 0) {
-		if (m_tokenizer.get_last_process_ret() != json_tokenizer_ret::C_COMMA) DASTD_THROW(exception_marshal, "marshal_dec_json::decode_array_element_begin: expected ',' but got result " << m_tokenizer.get_last_process_ret() << " " << DECOPRINTER(m_tokenizer.get_raw_token()));
+	if (!m_relaxed) {
+		if (cur_stack.m_items_count > 0) {
+			if (m_tokenizer.get_last_process_ret() != json_tokenizer_ret::C_COMMA) DASTD_THROW(exception_marshal, "marshal_dec_json::decode_array_element_begin: expected ',' but got result " << m_tokenizer.get_last_process_ret() << " " << DECOPRINTER(m_tokenizer.get_raw_token()));
+		}
+		else {
+			resubmit_prev_token();
+		}
 	}
 	else {
 		resubmit_prev_token();
@@ -742,9 +779,11 @@ inline bool marshal_dec_json<CHARTYPE, DECOPRINTER>::decode_dictionary_element_b
 	}
 
 	// If this is not the first field, there must be a comma
-	if (cur_stack.m_items_count > 0) {
-		if (m_tokenizer.get_last_process_ret() != json_tokenizer_ret::C_COMMA) DASTD_THROW(exception_marshal, "marshal_dec_json::decode_dictionary_element_begin: expected ',' but got result " << m_tokenizer.get_last_process_ret() << " " << DECOPRINTER(m_tokenizer.get_raw_token()));
-		fetch_token();
+	if (!m_relaxed) {
+		if (cur_stack.m_items_count > 0) {
+			if (m_tokenizer.get_last_process_ret() != json_tokenizer_ret::C_COMMA) DASTD_THROW(exception_marshal, "marshal_dec_json::decode_dictionary_element_begin: expected ',' but got result " << m_tokenizer.get_last_process_ret() << " " << DECOPRINTER(m_tokenizer.get_raw_token()));
+			fetch_token();
+		}
 	}
 	cur_stack.m_items_count++;
 

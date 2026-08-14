@@ -61,6 +61,14 @@ class multithread_queue {
 		template<class Rep, class Period>
 		void wait(const std::chrono::duration<Rep, Period>& timeout);
 
+		/// @brief Wait on the queue for a message to be available and return it if so
+		/// @param m Reference to the object that will receive a copy of the extracted element
+		/// @param timeout Timeout after which this method returns anyway; for example `std::chrono::milliseconds(2000)`
+		///
+		/// The combination of `wait` followed by `pop`.
+		template<class Rep, class Period>
+		bool wait_and_pop(ELEMENT& m, const std::chrono::duration<Rep, Period>& timeout);
+
 		/// @brief Signal the waiting threads that something has happened
 		void signal() {m_condvar.notify_all();}
 };
@@ -129,6 +137,23 @@ void multithread_queue<ELEMENT,DESTROYER>::wait(const std::chrono::duration<Rep,
 {
 	std::unique_lock<std::mutex> lock(this->m_mutex);
 	m_condvar.wait_for(lock, timeout);
+}
+
+//------------------------------------------------------------------------------
+// (brief) Wait on the queue for a message to be available and return it if so
+// (param) m Reference to the object that will receive a copy of the extracted element
+// (param) timeout Timeout after which this method returns anyway; for example `std::chrono::milliseconds(2000)`
+//
+// The combination of `wait` followed by `pop`.
+//------------------------------------------------------------------------------
+template<class ELEMENT, class DESTROYER> template<class Rep, class Period>
+bool multithread_queue<ELEMENT,DESTROYER>::wait_and_pop(ELEMENT& m, const std::chrono::duration<Rep, Period>& timeout)
+{
+	if (timeout != std::chrono::duration<Rep, Period>::zero()) {
+		std::unique_lock<std::mutex> lock(this->m_mutex);
+		m_condvar.wait_for(lock, timeout);
+	}
+	return pop(m);
 }
 
 } // namespace dastd

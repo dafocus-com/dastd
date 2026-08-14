@@ -32,7 +32,7 @@ class hash_crc32: public hash {
 		/// @param length Number of bytes to be processed
 		///
 		/// @return Returns this hash to allow chaining
-		virtual hash& add_binary(const void* bytes, size_t length) override;
+		virtual void add_binary(const void* bytes, size_t length) override;
 
 	public:
 		/// @brief reset the hash calculator to its initial state.
@@ -128,14 +128,13 @@ inline constexpr uint32_t crc32_table [256] = {
 /// @param length Number of bytes to be processed
 ///
 /// @return Returns this hash to allow chaining
-inline hash& hash_crc32::add_binary(const void* bytes, size_t length)
+inline void hash_crc32::add_binary(const void* bytes, size_t length)
 {
 	size_t i;
 	for (i=0; i<length; i++) {
 		uint32_t ch = ((const uint8_t*)bytes)[i];
 		m_crc32 = crc32_table[(m_crc32 ^ ch) & 0xff] ^ (m_crc32 >> 8);
 	}
-	return *this;
 }
 
 #if DASTD_CPP_VER >= 20
@@ -150,7 +149,7 @@ inline hash& hash_crc32::add_binary(const void* bytes, size_t length)
 ///
 /// @param string ASCII-Z zero terminated string to be processed
 /// @return Retruns the CRC-32 of the string
-inline consteval uint32_t const_crc32(const char str[])
+inline constexpr uint32_t const_crc32(const char str[])
 {
 	size_t i;
 	uint32_t crc32 = 0xffffffffUL;
@@ -161,7 +160,7 @@ inline consteval uint32_t const_crc32(const char str[])
 	return crc32 ^ 0xffffffffL;
 }
 
-inline consteval uint32_t const_crc32(const std::string_view str)
+inline constexpr uint32_t const_crc32(const std::string_view str)
 {
 	size_t i;
 	uint32_t crc32 = 0xffffffffUL;

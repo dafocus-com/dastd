@@ -54,7 +54,7 @@ class sink_ch32_indent: public char32sink_indent_base {
 		//
 		// @param target Stream that will receive the actual output
 		// @param last_wasEOL If true, it will start immediately with an indent; otherwise, the first line will not receive the indent.
-		sink_ch32_indent(sink_ch32& target, int indent_level=1, bool last_wasEOL=true, const std::u32string_view& indent_string=U"\t"):
+		sink_ch32_indent(sink_ch32& target, int indent_level=1, bool last_wasEOL=true, std::u32string_view indent_string=U"\t"):
 			char32sink_indent_base(target, last_wasEOL), m_indent_level(indent_level), m_indent_string(indent_string) {}
 
 		// Increase the tab level for the given amount
@@ -67,7 +67,7 @@ class sink_ch32_indent: public char32sink_indent_base {
 		void dec_indent() {indent(-1);}
 
 		// Set a new indent string
-		void set_indent_string(const std::u32string_view& indent_string) {m_indent_string=indent_string;}
+		void set_indent_string(std::u32string_view indent_string) {m_indent_string=indent_string;}
 
 	protected:
 		// Tab level

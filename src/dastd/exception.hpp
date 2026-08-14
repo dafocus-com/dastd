@@ -18,6 +18,9 @@ class exception: public std::exception {
 		/// @brief Empty constructor
 		exception() {}
 
+		/// @brief Constructor with string
+		exception(std::string_view error_text): m_error_text(error_text) {}
+
 		/// @brief Copy constructor
 		exception(const exception& o): m_error_text(o.m_error_text) {}
 

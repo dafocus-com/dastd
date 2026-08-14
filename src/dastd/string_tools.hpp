@@ -88,17 +88,17 @@ void trim_trailing_spaces(std::basic_string<CHARTYPE>& value)
 }
 
 /// @brief Case-inseneitve comparison of two strings
-/// @param s1 First string
+/// @param schema1 First string
 /// @param s2 Second string
-/// @return Returns `<0` if `s1<s2`, 0 if `s1==s2` and `>0` if `s1>s2`
-inline int icompare(const std::string_view& s1, const std::string_view& s2)
+/// @return Returns `<0` if `schema1<s2`, 0 if `schema1==s2` and `>0` if `schema1>s2`
+inline int icompare(std::string_view schema1, std::string_view s2)
 {
-	size_t sz1 = s1.size();
+	size_t sz1 = schema1.size();
 	size_t sz2 = s2.size();
 	size_t len=std::min(sz1, sz2);
 	size_t i;
 	for (i=0; i<len; i++) {
-		uint8_t c1 = (uint8_t)std::tolower(s1[i]);
+		uint8_t c1 = (uint8_t)std::tolower(schema1[i]);
 		uint8_t c2 = (uint8_t)std::tolower(s2[i]);
 		if (c1 < c2) return -1;
 		if (c1 > c2) return +1;

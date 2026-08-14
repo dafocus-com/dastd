@@ -23,7 +23,7 @@ class char32string: public std::u32string, public flooder_ch32, public sink_ch32
 		char32string() {}
 
 		/// @brief Copy constructor
-		char32string(const std::u32string_view& o): std::u32string(o) {}
+		char32string(std::u32string_view o): std::u32string(o) {}
 
 		/// @brief Copy constructor
 		char32string(const std::u32string& o): std::u32string(o) {}
@@ -44,7 +44,7 @@ class char32string: public std::u32string, public flooder_ch32, public sink_ch32
 		char32string(const std::string& utf8) {append_from_utf8(utf8);}
 
 		/// @brief Constructor from a string UTF-8
-		char32string(const std::string_view& utf8) {append_from_utf8(utf8);}
+		char32string(std::string_view utf8) {append_from_utf8(utf8);}
 
 		/// @brief Set from another flooder_ch32
 		char32string(const flooder_ch32& c32src) {c32src.write_to_sink(*this);}
@@ -55,7 +55,7 @@ class char32string: public std::u32string, public flooder_ch32, public sink_ch32
 		/// @brief Assignment operator
 		/// @param o Source string
 		/// @return Returns itself
-		char32string& operator=(const std::u32string_view& o) {std::u32string::operator=(o); return *this;}
+		char32string& operator=(std::u32string_view o) {std::u32string::operator=(o); return *this;}
 
 		/// @brief Assignment operator
 		/// @param o Source string
@@ -84,7 +84,7 @@ class char32string: public std::u32string, public flooder_ch32, public sink_ch32
 		///  @return Returns the number of characters used from "utf8".
 		///  If this number does not include the entire string, it means that an
 		///  error occurred at that position.
-		size_t append_from_utf8(const std::string_view& utf8) {return append_from_utf8(utf8.data(), utf8.length());}
+		size_t append_from_utf8(std::string_view utf8) {return append_from_utf8(utf8.data(), utf8.length());}
 
 		///  @brief Append from UTF-8.
 		///
@@ -141,7 +141,7 @@ class char32string: public std::u32string, public flooder_ch32, public sink_ch32
 		/// @brief Compare this string with an UTF-8 string
 		/// @param utf8 The UTF-8 encoded string this string is to be compared to
 		/// @return Return <0 if this<utf8;
-		int compare_utf8(const std::string_view& utf8) const {return compare(char32string(utf8));}
+		int compare_utf8(std::string_view utf8) const {return compare(char32string(utf8));}
 
 		///  @brief Write on the indicate sink_ch32
 		virtual void write_to_sink(sink_ch32& sink) const override;
@@ -189,6 +189,9 @@ class char32string: public std::u32string, public flooder_ch32, public sink_ch32
 };
 
 inline sink_ch32& operator<<(sink_ch32& sink, const char32string& d) {sink.sink_write(d); return sink;}
+
+// Defined in fmt_string.hpp
+// inline std::ostream& operator<<(std::ostream& o, const char32string& d) {...}
 
 
 } // namespace dastd

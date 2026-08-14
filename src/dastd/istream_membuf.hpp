@@ -29,7 +29,7 @@ class istream_membuf: public std::istream {
 
 		/// @brief Constructor
 		/// @param str String view used as a source of data
-		istream_membuf(const std::string_view& str): std::istream(&m_membuf), m_membuf(str.data(), str.size()) {}
+		istream_membuf(std::string_view str): std::istream(&m_membuf), m_membuf(str.data(), str.size()) {}
 };
 
 } // namespace dastd
