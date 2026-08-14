@@ -11,7 +11,7 @@ project(
   meson_version: '>=0.61.0'
 )
 
-version = '1.0.04'
+version = '1.0.05'
 dastd_headers = []
 subdir('src/dastd')
 dastd_dep = declare_dependency(include_directories: 'src', version: version)
