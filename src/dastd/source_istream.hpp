@@ -10,7 +10,7 @@
 namespace dastd {
 
 /// @brief Binary data source bound to a std::istream
-template<class CHARTYPE>
+template<class CHARTYPE = char>
 class source_istream: public source<CHARTYPE> {
 	// This class currently supports only 1-byte long types
 	static_assert(sizeof(CHARTYPE) == 1, "source_istream currently supports only 1-byte long characters");
@@ -37,6 +37,10 @@ class source_istream: public source<CHARTYPE> {
 		/// @throw           It can throw a std::exception or one of its derivatives
 		virtual size_t tentative_read(CHARTYPE* data, size_t data_size) override 
 		{
+			int c = m_istr.peek();
+			if (c == std::char_traits<CHARTYPE>::eof()) {
+				return 0;
+			}
 			m_istr.read((CHARTYPE*)data, data_size); 
 			return m_istr.gcount();
 		}

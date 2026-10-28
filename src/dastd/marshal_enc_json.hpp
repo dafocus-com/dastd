@@ -62,7 +62,7 @@ class marshal_enc_json: public marshal_enc {
 		/// @param out Stream where the JSON data will be written
 		/// @param polymorphic_encoding   See @ref marshal_json_polymorphic_encoding
 		/// @param typed_field            Name of the field in case of `TYPEID_AS_STRUCT_FIELD`; see @ref marshal_json_polymorphic_encoding
-		marshal_enc_json(std::ostream &out, marshal_json_polymorphic_encoding polymorphic_encoding=marshal_json_polymorphic_encoding::TYPEID_AS_FIELD_NAME, const std::string& typed_field="$type"):
+		marshal_enc_json(std::ostream &out, marshal_json_polymorphic_encoding polymorphic_encoding=marshal_json_polymorphic_encoding::TYPEID_AS_FIELD_NAME, std::string_view typed_field="$type"):
 			m_polymorphic_encoding(polymorphic_encoding), m_typed_field(typed_field), m_out(out) {}
 
 		/// @brief Encode a bool

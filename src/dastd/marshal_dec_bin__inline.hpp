@@ -176,7 +176,7 @@ inline void marshal_dec_bin::decode_u32string(std::u32string& value, uint32_t su
 			// If the length does not include enough characters, throw an exception
 			// It means that the UTF-8 string is badly formed.
 			if (extra_chars > length-i) {
-				DASTD_THROW(exception_marshal, "marshal_dec_bin::decode_u32string expected " << extra_chars << " characters to complete UTF-8, but only " << (length-i) << " were available according to length")
+				DASTD_THROW(exception_marshal, "marshal_dec_bin::decode_u32string expected " << extra_chars << " characters to complete UTF-8, but only " << (length-i) << " were available according to length");
 			}
 			memset(tmp_buf, 0, sizeof(tmp_buf));
 			tmp_buf[0] = ch;
@@ -450,7 +450,7 @@ inline void marshal_dec_bin_istream::read_bytes_impl(void* target, size_t length
 {
 	m_input.read((char*)target, length);
 	if (m_input.gcount() != (std::streamsize)length) {
-		DASTD_THROW(exception_marshal, "marshal_dec_bin_istream::read_bytes_impl failed reading " << length << " bytes; read only " << m_input.gcount())
+		DASTD_THROW(exception_marshal, "marshal_dec_bin_istream::read_bytes_impl failed reading " << length << " bytes; read only " << m_input.gcount());
 	}
 }
 
@@ -461,7 +461,7 @@ void marshal_dec_bin_source<CHARTYPE>::read_bytes_impl(void* target, size_t leng
 {
 		size_t bytesRead = m_input.tentative_read((CHARTYPE*)target, length);
 		if (bytesRead != length) {
-				DASTD_THROW(exception_marshal, "marshal_dec_bin_source::read_bytes_impl failed reading " << length << " bytes; read only " << bytesRead)
+				DASTD_THROW(exception_marshal, "marshal_dec_bin_source::read_bytes_impl failed reading " << length << " bytes; read only " << bytesRead);
 		}
 }
 

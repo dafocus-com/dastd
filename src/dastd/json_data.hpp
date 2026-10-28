@@ -245,12 +245,13 @@ class json_data_object: public json_data {
 		///     if (myField) cout << "Found: " << *myField << endl;
 		///     else cout << "Not found" << endl;
 		///
-		template<class DATA_TYPE>
+		template<class DATA_TYPE=json_data>
 		std::shared_ptr<DATA_TYPE> find(const std::u32string& name) const;
 
 		/// @brief Find a member
-		template<class DATA_TYPE>
+		template<class DATA_TYPE=json_data>
 		std::shared_ptr<DATA_TYPE> find(std::string_view name_utf8) const {return find<DATA_TYPE>(char32string(name_utf8));}
+
 
 		/// @brief Find a member, pedantic mode
 		/// @return `ret.first` is the value found or `nullptr` if not found or not convertible; `ret.second` is `true` if the key was found.
@@ -264,11 +265,11 @@ class json_data_object: public json_data {
 		///     if (myField) cout << "Found: " << *myField << endl;
 		///     else cout << "Not found" << endl;
 		///
-		template<class DATA_TYPE>
+		template<class DATA_TYPE=json_data>
 		std::pair<std::shared_ptr<DATA_TYPE>, bool> find_pedantic(const std::u32string& name) const;
 
 		/// @brief Find a member, pedantic mode
-		template<class DATA_TYPE>
+		template<class DATA_TYPE=json_data>
 		std::pair<std::shared_ptr<DATA_TYPE>, bool> find_pedantic(std::string_view name_utf8) const {return find_pedantic<DATA_TYPE>(char32string(name_utf8));}
 
 		/// @brief Print the content without terminating with a newline
@@ -291,8 +292,19 @@ class json_data_array: public json_data {
 		/// @return Returns a new instance of the object in a shared pointer 
 		static std::shared_ptr<json_data_array> make() {return std::shared_ptr<json_data_array>(new json_data_array);}
 
+		/// @brief Type used for the array
+		using t_array = std::vector<std::shared_ptr<json_data>>;
+
 		/// @brief Values
-		std::vector<std::shared_ptr<json_data>> m_values;
+		t_array m_values;
+
+		/// @brief Method `begin` that allows direct iteration
+		/// @return Returns the `begin()` entry of the internal list
+		t_array::const_iterator begin() const {return m_values.begin();}
+
+		/// @brief Method `end` that allows direct iteration
+		/// @return Returns the `end()` entry of the internal list
+		t_array::const_iterator end() const {return m_values.end();}
 
 		/// @brief Add a member created externally
 		template<class DATA_TYPE>

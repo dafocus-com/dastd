@@ -13,7 +13,6 @@
 #include <string>
 #include <ostream>
 #include <memory>
-#include <ostream>
 
 // Requires at least C++ 20
 static_assert(DASTD_CPP_VER >= 20);
@@ -45,7 +44,7 @@ static_assert(DASTD_CPP_VER >= 20);
 	#endif
 #endif
 
-
+/// @brief Stream insertion operator (<<) used in C++ printing
 #define DASTD_DEF_OSTREAM(t) inline std::ostream& operator<< (std::ostream& o, const t& n) {n.print(o); return o;}
 #define DASTD_DEF_OSTREAM_SHARED_PTR(t) inline std::ostream& operator<< (std::ostream& o, std::shared_ptr<const t> n) {if (n) n->print(o); else o << "nullptr"; return o;}
 #define DASTD_NUMCMP(a,b) ((a)<(b)?-1:((a)==(b)?0:1))
@@ -76,7 +75,7 @@ namespace dastd {
 
 	/// @brief Microseconds from epoch (01-JAN-1970)
 	using epoch64us_t = int64_t;
-	inline constexpr epoch64us_t epoch64us_INVALID = std::numeric_limits<epoch64us_t>::max();
+	constexpr epoch64us_t epoch64us_INVALID = std::numeric_limits<epoch64us_t>::max();
 } // namespace dastd
 
 /*------------------------------------------------------------------------------

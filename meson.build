@@ -11,9 +11,7 @@ project(
   meson_version: '>=0.61.0'
 )
 
-version = '1.0.05'
-dastd_headers = []
-subdir('src/dastd')
+version = '1.0.06'
 dastd_dep = declare_dependency(include_directories: 'src', version: version)
 meson.override_dependency('dastd', dastd_dep)
 

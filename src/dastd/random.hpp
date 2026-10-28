@@ -27,9 +27,8 @@ class random {
 		/// @param min     Minimum value
 		/// @param max     Maximum value
 		/// @return        Returns a random number in the indicated range
-		template<typename NUMTYPE>
+		template<concept_integral NUMTYPE>
 		NUMTYPE uniform_int_distribution(NUMTYPE min = std::numeric_limits<NUMTYPE>::lowest(), NUMTYPE max = std::numeric_limits<NUMTYPE>::max()) {
-			static_assert(std::is_integral<NUMTYPE>::value, "Integral required");
 			std::lock_guard<spinlock> lock(m_lock);
 			std::uniform_int_distribution<NUMTYPE> distribution(min,max);
 			return distribution(m_generator);

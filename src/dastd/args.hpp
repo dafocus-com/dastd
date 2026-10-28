@@ -522,7 +522,7 @@ class arg_opt_aka: public arg_opt {
 // See file header
 class args_parser: public std::enable_shared_from_this<args_parser> {
 	protected:
-		/// @brief Protected constructor; use args_parser::make() to create an instance
+		/// @brief Protected constructor; use the public `make` factory methods that create a dynamic instance in a shared pointer; use args_parser::make() to create an instance
 		args_parser() {}
 
 	public:
@@ -987,8 +987,15 @@ inline bool args_parser::execute()
 				}
 				else {
 					if (opt->is_parametric()) {
-						error_missing_value(*opt);
-						valid = false;
+						// See if the user specified "--param value" instead of "--param=value"
+						if (i+1 < m_args_vals.size()) {
+							i++;
+							opt->matched(m_args_vals[i]);
+						}
+						else {
+							error_missing_value(*opt);
+							valid = false;
+						}
 					}
 					else {
 						opt->matched("");

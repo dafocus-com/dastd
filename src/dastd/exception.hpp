@@ -44,10 +44,15 @@ class exception: public std::exception {
 ///
 ///    DASTD_THROW(exception, "This is error " << errorCode << " etc.")
 ///
-#define DASTD_THROW(exc,text) {exc e; e.m_error_text << text; throw e;}
+//#define DASTD_THROW(exc,text) {exc e; e.m_error_text << text; throw e;}
+#define DASTD_THROW(exc,text) throw exc(DSTR(text))
 
 /// @brief Define an exception type derived from dastd::exception
-#define DASTD_DEF_EXCEPTION(exc) class exc: public ::dastd::exception{};
+#define DASTD_DEF_EXCEPTION(exc) class exc: public ::dastd::exception{\
+	public:\
+		exc() {} \
+		exc(std::string_view error_text): ::dastd::exception(error_text) {}\
+}; 
 
 /// @brief Define an exception type derived from 'base'
 #define DASTD_DEF_EXCEPTION2(exc,base) class exc: public base{};

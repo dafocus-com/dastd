@@ -97,7 +97,7 @@ class marshal_dec_json: public marshal_dec {
 		///                     remain available and unchanged until the parsing has terminated.
 		/// @param polymorphic_encoding   See @ref marshal_json_polymorphic_encoding
 		/// @param typed_field            Name of the field in case of `TYPEID_AS_STRUCT_FIELD`; see @ref marshal_json_polymorphic_encoding
-		marshal_dec_json(json_tokenizer_source<CHARTYPE>& source, marshal_json_polymorphic_encoding polymorphic_encoding=marshal_json_polymorphic_encoding::TYPEID_AS_FIELD_NAME, const std::string& typed_field="$type"):
+		marshal_dec_json(json_tokenizer_source<CHARTYPE>& source, marshal_json_polymorphic_encoding polymorphic_encoding=marshal_json_polymorphic_encoding::TYPEID_AS_FIELD_NAME, std::string_view typed_field="$type"):
 			m_tokenizer(source), m_polymorphic_encoding(polymorphic_encoding), m_typed_field(typed_field) {}
 
 		/// @brief Enables or disables "relaxed" decoding.

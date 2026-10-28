@@ -68,7 +68,7 @@ class source_string_or_vector: public source_with_peek<CHARTYPE> {
 		/// @return       Returns `true` if one character has been fetched; returns `false` if no
 		///               more characters are available and `data` is not valid
 		/// @throw        It can throw a std::exception or one of its derivatives
-		virtual bool tentative_peek_char(CHARTYPE& data) {return (tentative_peek(&data, 1) == 1);}
+		virtual bool tentative_peek_char(CHARTYPE& data) override {return (tentative_peek(&data, 1) == 1);}
 };
 
 

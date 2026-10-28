@@ -604,7 +604,7 @@ inline void marshal_enc_bin_ostream::write_bytes(const void* source, size_t leng
 {
 	m_output.write((const char*)source, length);
 	if (m_output.bad() || m_output.fail()) {
-		DASTD_THROW(exception_marshal, "marshal_enc_bin_ostream::write_bytes failed writing " << length << " bytes")
+		DASTD_THROW(exception_marshal, "marshal_enc_bin_ostream::write_bytes failed writing " << length << " bytes");
 	}
 }
 
@@ -613,7 +613,7 @@ inline std::streampos marshal_enc_bin_ostream::get_curr_pos() const
 {
 	std::streampos pos = m_output.tellp();
 	if (m_output.bad() || m_output.fail()) {
-		DASTD_THROW(exception_marshal, "marshal_enc_bin_ostream::set_curr_pos")
+		DASTD_THROW(exception_marshal, "marshal_enc_bin_ostream::set_curr_pos");
 	}
 	return pos;
 }
@@ -623,7 +623,7 @@ inline void marshal_enc_bin_ostream::set_curr_pos(std::streampos pos)
 {
 	m_output.seekp(pos);
 	if (m_output.bad() || m_output.fail()) {
-		DASTD_THROW(exception_marshal, "marshal_enc_bin_ostream::set_curr_pos")
+		DASTD_THROW(exception_marshal, "marshal_enc_bin_ostream::set_curr_pos");
 	}
 }
 

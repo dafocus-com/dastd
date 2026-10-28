@@ -33,7 +33,7 @@ inline std::ostream& operator<<(std::ostream& o, json_data_decoder_error_t err) 
 
 /// @brief Implements a decoder that creates a `json_data` root instance
 /// @tparam CHARTYPE 
-template<class CHARTYPE>
+template<class CHARTYPE = char>
 class json_data_decoder {
 	protected:
 		/// @brief Tokenizer object
@@ -65,6 +65,10 @@ class json_data_decoder {
 		/// @param fetch_new_token Set to `true` if the code has to start by fetching the new token or `false` if it has to use the currently fetched token
 		/// @return Returns the instance of the root element or `nullptr` in case of failure
 		std::shared_ptr<json_data> decode_unknown(bool fetch_new_token);
+
+		/// @brief Allows accessing the tokenizer for manual processing
+		/// @return Returns the internal tokenizer
+		json_tokenizer_sourced<CHARTYPE>& tokenizer() {return m_tokenizer;}
 
 	public:
 		/// @brief Reports an error
